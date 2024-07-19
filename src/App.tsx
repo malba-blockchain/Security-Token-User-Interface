@@ -21,12 +21,17 @@ function App() {
   const [showAllowanceInput, setShowAllowanceInput] = useState<boolean>(false);
   const [showGetFrozenTokensInput, setShowGetFrozenTokensInput] = useState<boolean>(false);
   const [showIsFrozenClickInput, setShowIsFrozenClickInput] = useState<boolean>(false);
+  const [showApproveBalanceInput, setShowApproveBalanceInput] = useState<boolean>(false);
+  const [showBatchMintInput, setShowBatchMintInput] = useState<boolean>(false);
 
   const [address, setAddress] = useState<string>("");
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [smartContractAddress, setSmartContractAddress] = useState<string>("");
   const [ownerAddress, setOwnerAddress] = useState<string>("");
   const [spenderAddress, setSpenderAddress] = useState<string>("");
+  const [amount, setAmount] = useState<string>("");
+  const [addressesList, setAddressesList] = useState<string>("");
+  const [amounts, setAmounts] = useState<string>("");
 
   useEffect(() => {
     const init = async () => {
@@ -161,13 +166,13 @@ function App() {
     uiConsole(balance);
   };
 
-  const smartContractBalanceOf = async (walletAddress: any, smartContractAddress: any) => {
+  const smartContractBalanceOf = async (walletAddress: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
       return;
     }
     const rpc = new RPC(provider);
-    const balance = await rpc.smartContractBalanceOf(walletAddress, smartContractAddress);
+    const balance = await rpc.smartContractBalanceOf(walletAddress);
     uiConsole(balance);
   };
 
@@ -219,6 +224,32 @@ function App() {
     const rpc = new RPC(provider);
     const isFrozen = await rpc.smartContractIsFrozen(walletAddress);
     uiConsole(isFrozen);
+  };
+
+  const smartContractApproveBalance = async (spenderAddress: any, amount:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    
+    const approval = await rpc.smartContractApproveBalance(spenderAddress, amount);
+    uiConsole(approval);
+  };
+
+  const smartContractBatchMint = async (addressesList: any, amounts:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    // Split the comma-separated strings into arrays
+    const _addressesList = addressesList.split(',');
+    const _amounts = amounts.split(',');
+
+    const rpc = new RPC(provider);
+    
+    const approval = await rpc.smartContractBatchMint(_addressesList, _amounts);
+    uiConsole(approval);
   };
 
   const getName= async () => {
@@ -327,6 +358,15 @@ function App() {
     else if (event.target.id === 'spenderAddress') {
       setSpenderAddress(event.target.value);
     }
+    else if (event.target.id === 'amount') {
+      setAmount(event.target.value);
+    }
+    else if (event.target.id === 'addressesList') {
+      setAddressesList(event.target.value);
+    }
+    else if (event.target.id === 'amounts') {
+      setAmounts(event.target.value);
+    }
   };
 
   const handleCheckBalance = () => {
@@ -342,15 +382,12 @@ function App() {
   const handleTokenBalanceOfClick = () => {
     setShowTokenInput(!showTokenInput); // Toggle Token input visibility
     setWalletAddress("");
-    setSmartContractAddress("");
   };
 
   const handleCheckSmartContractBalance = () => {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
-    const smartContractAddress = (document.getElementById('smartContractAddress') as HTMLInputElement).value;
-    smartContractBalanceOf(walletAddress, smartContractAddress);
+    smartContractBalanceOf(walletAddress);
     setWalletAddress("");
-    setSmartContractAddress("");
   };
 
   const handleAllowanceClick = () => {
@@ -387,6 +424,34 @@ function App() {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     smartContractIsFrozen(walletAddress);
     setWalletAddress("");
+  };
+
+  const handleApproveBalanceClick = () => {
+    setShowApproveBalanceInput(!showApproveBalanceInput); // Toggle Token input visibility
+    setSpenderAddress("");
+    setAmount("");
+  };
+
+  const handleApproveBalance= () => {
+    const spenderAddress = (document.getElementById('spenderAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    smartContractApproveBalance(spenderAddress, amount);
+    setSpenderAddress("");
+    setAmount("");
+  };
+
+  const handleBatchMintClick = () => {
+    setShowBatchMintInput(!showBatchMintInput); // Toggle Token input visibility
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchMint= () => {
+    const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
+    const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
+    smartContractBatchMint(addressesList, amounts);
+    setAddressesList("");
+    setAmounts("");
   };
 
   const loggedInView = (
@@ -461,7 +526,6 @@ function App() {
           </button>
           {showTokenInput && (
             <div>
-              <input type="text" value={smartContractAddress} id="smartContractAddress" onChange={handleInputChange} placeholder="Enter smart contract address" />
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
               <button onClick={handleCheckSmartContractBalance} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
                 Check Token Balance
@@ -554,24 +618,41 @@ function App() {
             Get Total Supply
           </button>
         </div>
-      
       </div>
 
       <h3>Smart contract write functions</h3>
-      <div>
-          <button onClick={handleAllowanceClick} className="card">
-            Approve
+      <div className="flex-container">
+        <div>
+          <button onClick={handleApproveBalanceClick} className="card">
+            Approve Balance
           </button>
-          {showAllowanceInput && (
+          {showApproveBalanceInput && (
             <div>
-              <input type="text" value={ownerAddress} id="ownerAddress" onChange={handleInputChange} placeholder="Enter owner address" />
               <input type="text" value={spenderAddress} id="spenderAddress" onChange={handleInputChange} placeholder="Enter spender address" />
-              <button onClick={handleCheckAllowance} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-                Check User Allowance
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleApproveBalance} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Approve
               </button>
             </div>
           )}
         </div>
+
+        <div>
+          <button onClick={handleBatchMintClick} className="card">
+            Batch Mint
+          </button>
+          {showBatchMintInput && (
+            <div>
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Enter addresses list" />
+              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Enter amount list" />
+              <button onClick={handleBatchMint} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Mint
+              </button>
+            </div>
+          )}
+        </div>
+
+      </div>
 
       <h3>|||Console returns|||</h3>
       <div id="console" style={{ whiteSpace: "pre-line" }}>

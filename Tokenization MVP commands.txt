@@ -3,7 +3,6 @@ D:&cd D:\USER\Downloads\ATLAS\Projects\Mastering-Security-Token-ERC-3643\Web3Aut
 npm install
 npm run start
 
-
 d:&cd D:\USER\Downloads\ATLAS\Projects\Mastering-Security-Token-ERC-3643\scaffold-eth-2
 
 yarn hardhat clean
@@ -88,7 +87,7 @@ IV. Create interactions with the deployed smart contract using web3auth interfac
 -Symbol DONE
 -TotalSupply DONE
 
--Approve
+-Approve  DONE
 -batchMint
 -batchBurn
 -batchTransfer
@@ -104,6 +103,23 @@ Token Contract Address:  0x60E5799fed9ACbdaF36e752a05468f1519b03c6f
 
 Deployer:  0xb44e0C06718534F27847e607B6AE9368798fB974
 Adam Wallet:  0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1
+Token Admin:  0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9
+
+Adam Wallet:  0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1
+Bob Wallet:  0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4
+Charlie Wallet:  0x34795B6a05543Fe097C8BbBc221e3119f27B793E
+
+0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1,
+0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4,
+0x34795B6a05543Fe097C8BbBc221e3119f27B793E
+
+CONTINUE HERE: I was testing the APPROVE function in the webauth interface.
+
+In order to execute it I need to add tokens to the tokenAdmin wallet
+
+In order to add tokens/mint them. I need to create and add the identity and claim of tokenAdmin to the registry in the scaffold-eth script. I'm at this point.
+
+
 
 3. Create user buttons to interact with tokens
 
@@ -113,15 +129,10 @@ Adam Wallet:  0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1
 V. Launch online using vercel/simmilar
 
 
-CONTINUE HERE: Upload github repo.
 
 
 
 
-
-
-
-
-
-
+addressesList
+amounts
 
