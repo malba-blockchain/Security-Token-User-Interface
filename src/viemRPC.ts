@@ -447,7 +447,6 @@ async getAddresses(): Promise<any> {
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       //const dataDecimal = BigInt(receipt.logs[0].data);
-
       //const result = "Minted: " + dataDecimal.toString() + ", to: "+ ;
       
       return this.toObject(receipt); 
@@ -455,6 +454,335 @@ async getAddresses(): Promise<any> {
       return error;
     }
   }
+
+  async smartContractBatchBurn(_addressesList:any, _amounts:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'batchBurn',
+              args: [_addressesList, _amounts]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractBatchTransfer(_addressesList:any, _amounts:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'batchTransfer',
+              args: [_addressesList, _amounts]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractBurnTokens(walletAddress:any, amount:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'burn',
+              args: [walletAddress, amount]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      const dataDecimal = BigInt(receipt.logs[0].data);
+
+      const result = "Burned: " + dataDecimal.toString() + ", from: "+ walletAddress;
+      
+      return this.toObject(result); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractFreezePartialTokens(walletAddress:any, amount:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'freezePartialTokens',
+              args: [walletAddress, amount]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      const dataDecimal = BigInt(receipt.logs[0].data);
+
+      const result = "Freezed: " + dataDecimal.toString() + ", to: "+ walletAddress;
+      
+      return this.toObject(result); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractMintTokens(walletAddress:any, amount:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'mint',
+              args: [walletAddress, amount]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      const dataDecimal = BigInt(receipt.logs[0].data);
+
+      const result = "Minted: " + dataDecimal.toString() + ", to: "+ walletAddress;
+      
+      return this.toObject(result); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractRecoveryAddress(lostWalletAddress:any, newWalletAddress:any, investorOnchainID:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'recoveryAddress',
+              args: [lostWalletAddress, newWalletAddress,investorOnchainID ]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractTransferTokens(walletAddress:any, amount:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'transfer',
+              args: [walletAddress, amount]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      const dataDecimal = BigInt(receipt.logs[0].data);
+
+      const result = "Transfered: " + dataDecimal.toString() + ", to: "+ walletAddress;
+      
+      return this.toObject(result); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractUnfreezePartialTokens(walletAddress:any, amount:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'unfreezePartialTokens',
+              args: [walletAddress, amount]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      const dataDecimal = BigInt(receipt.logs[0].data);
+
+      const result = "Unfreezed: " + dataDecimal.toString() + ", to: "+ walletAddress;
+      
+      return this.toObject(result); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractPause(): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'pause',
+          }
+      )
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  
+
+  async smartContractUnpause(): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'unpause',
+          }
+      )
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
   
   async signMessage() {
     try {

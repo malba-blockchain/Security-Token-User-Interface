@@ -23,15 +23,27 @@ function App() {
   const [showIsFrozenClickInput, setShowIsFrozenClickInput] = useState<boolean>(false);
   const [showApproveBalanceInput, setShowApproveBalanceInput] = useState<boolean>(false);
   const [showBatchMintInput, setShowBatchMintInput] = useState<boolean>(false);
+  const [showBatchBurnInput, setShowBatchBurnInput] = useState<boolean>(false);
+  const [showBatchTransferInput, setShowBatchTransferInput] = useState<boolean>(false);
+  const [showBurnTokensInput, setShowBurnTokensInput] = useState<boolean>(false);
+  const [showFreezePartialTokensInput, setShowFreezePartialTokensInput] = useState<boolean>(false);
+  const [showMintTokensInput, setShowMintTokensInput] = useState<boolean>(false);
+  const [showUnfreezePartialTokensInput, setShowUnfreezePartialTokensInput] = useState<boolean>(false);
+  const [showTransferTokensInput, setShowTransferTokensInput] = useState<boolean>(false);
+  const [showRecoveryAddressInput, setShowRecoveryAddressInput] = useState<boolean>(false);
 
+  
   const [address, setAddress] = useState<string>("");
   const [walletAddress, setWalletAddress] = useState<string>("");
-  const [smartContractAddress, setSmartContractAddress] = useState<string>("");
   const [ownerAddress, setOwnerAddress] = useState<string>("");
   const [spenderAddress, setSpenderAddress] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [addressesList, setAddressesList] = useState<string>("");
   const [amounts, setAmounts] = useState<string>("");
+  const [lostWalletAddress, setLostWalletAddress] = useState<string>("");
+  const [newWalletAddress, setNewWalletAddress] = useState<string>("");
+  const [investorOnchainID, setInvestorOnchainID] = useState<string>("");
+
 
   useEffect(() => {
     const init = async () => {
@@ -232,9 +244,9 @@ function App() {
       return;
     }
     const rpc = new RPC(provider);
-    
-    const approval = await rpc.smartContractApproveBalance(spenderAddress, amount);
-    uiConsole(approval);
+    uiConsole("Processing approval...");
+    const approveBalance = await rpc.smartContractApproveBalance(spenderAddress, amount);
+    uiConsole(approveBalance);
   };
 
   const smartContractBatchMint = async (addressesList: any, amounts:any) => {
@@ -247,9 +259,105 @@ function App() {
     const _amounts = amounts.split(',');
 
     const rpc = new RPC(provider);
-    
-    const approval = await rpc.smartContractBatchMint(_addressesList, _amounts);
-    uiConsole(approval);
+    uiConsole("Processing batch mint...");
+    const batchMint = await rpc.smartContractBatchMint(_addressesList, _amounts);
+    uiConsole(batchMint);
+  };
+
+  const smartContractBatchBurn = async (addressesList: any, amounts:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    // Split the comma-separated strings into arrays
+    const _addressesList = addressesList.split(',');
+    const _amounts = amounts.split(',');
+
+    const rpc = new RPC(provider);
+    uiConsole("Processing batch burn...");
+    const batchBurn = await rpc.smartContractBatchBurn(_addressesList, _amounts);
+    uiConsole(batchBurn);
+  };
+
+  const smartContractBatchTransfer = async (addressesList: any, amounts:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    // Split the comma-separated strings into arrays
+    const _addressesList = addressesList.split(',');
+    const _amounts = amounts.split(',');
+
+    const rpc = new RPC(provider);
+    uiConsole("Processing batch transfer...");
+    const batchTransfer = await rpc.smartContractBatchTransfer(_addressesList, _amounts);
+    uiConsole(batchTransfer);
+  };
+
+  const smartContractBurnTokens = async (walletAddress: any, amount:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing burn tokens...");
+    const burnTokens = await rpc.smartContractBurnTokens(walletAddress, amount);
+    uiConsole(burnTokens);
+  };
+
+  const smartContractFreezePartialTokens = async (walletAddress: any, amount:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing partial tokens freeze...");
+    const partialTokenFreeze = await rpc.smartContractFreezePartialTokens(walletAddress, amount);
+    uiConsole(partialTokenFreeze);
+  };
+
+  const smartContractMintTokens = async (walletAddress: any, amount:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing mint tokens...");
+    const mintTokens = await rpc.smartContractMintTokens(walletAddress, amount);
+    uiConsole(mintTokens);
+  };
+
+  const smartContractRecoveryAddress = async (lostWalletAddress: any, newWalletAddress:any, investorOnchainID:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing recovery address...");
+    const recoveryAddress = await rpc.smartContractRecoveryAddress(lostWalletAddress, newWalletAddress, investorOnchainID);
+    uiConsole(recoveryAddress);
+  };
+
+  const smartContractTransferTokens = async (walletAddress: any, amount:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing tokens transfer...");
+    const tokenTransfer = await rpc.smartContractTransferTokens(walletAddress, amount);
+    uiConsole(tokenTransfer);
+  };
+
+  const smartContractUnfreezePartialTokens = async (walletAddress: any, amount:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing partial tokens unfreeze...");
+    const partialTokenUnfreeze = await rpc.smartContractUnfreezePartialTokens(walletAddress, amount);
+    uiConsole(partialTokenUnfreeze);
   };
 
   const getName= async () => {
@@ -292,6 +400,28 @@ function App() {
     uiConsole(symbol);
   };
 
+  const pauseSmartContract= async () => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Pausing smart contract...");
+    const pause = await rpc.smartContractPause();
+    uiConsole(pause);
+  };
+  
+  const unpauseSmartContract= async () => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Unpausing smart contract...");
+    const unpause = await rpc.smartContractUnpause();
+    uiConsole(unpause);
+  };
+
   const getTotalSupply= async () => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -301,7 +431,6 @@ function App() {
     const totalSupply = await rpc.getTotalSupply();
     uiConsole(totalSupply);
   };
-
 
 
   const sendTransaction = async () => {
@@ -349,9 +478,6 @@ function App() {
     else if (event.target.id === 'walletAddress') {
       setWalletAddress(event.target.value);
     }
-    else if (event.target.id === 'smartContractAddress') {
-      setSmartContractAddress(event.target.value);
-    }
     else if (event.target.id === 'ownerAddress') {
       setOwnerAddress(event.target.value);
     }
@@ -366,6 +492,15 @@ function App() {
     }
     else if (event.target.id === 'amounts') {
       setAmounts(event.target.value);
+    }
+    else if (event.target.id === 'lostWalletAddress') {
+      setLostWalletAddress(event.target.value);
+    }
+    else if (event.target.id === 'newWalletAddress') {
+      setNewWalletAddress(event.target.value);
+    }
+    else if (event.target.id === 'investorOnchainID') {
+      setInvestorOnchainID(event.target.value);
     }
   };
 
@@ -453,6 +588,123 @@ function App() {
     setAddressesList("");
     setAmounts("");
   };
+
+  const handleBatchBurnClick = () => {
+    setShowBatchBurnInput(!showBatchBurnInput); // Toggle Token input visibility
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchBurn= () => {
+    const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
+    const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
+    smartContractBatchBurn(addressesList, amounts);
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchTransferClick = () => {
+    setShowBatchTransferInput(!showBatchTransferInput); // Toggle Token input visibility
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchTransfer= () => {
+    const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
+    const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
+    smartContractBatchTransfer(addressesList, amounts);
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBurnTokensClick = () => {
+    setShowBurnTokensInput(!showBurnTokensInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleBurnTokens= () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    smartContractBurnTokens(walletAddress, amount);
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleFreezePartialTokensClick = () => {
+    setShowFreezePartialTokensInput(!showFreezePartialTokensInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleFreezePartialTokens= () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    smartContractFreezePartialTokens(walletAddress, amount);
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleMintTokensClick = () => {
+    setShowMintTokensInput(!showMintTokensInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleMintTokens= () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    smartContractMintTokens(walletAddress, amount);
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleRecoveryAddressClick = () => {
+    setShowRecoveryAddressInput(!showRecoveryAddressInput); // Toggle Token input visibility
+    setLostWalletAddress("");
+    setNewWalletAddress("");
+    setInvestorOnchainID("");
+  };
+
+  const handleRecoveryAddress= () => {
+    const lostWalletAddress = (document.getElementById('lostWalletAddress') as HTMLInputElement).value;
+    const newWalletAddress = (document.getElementById('newWalletAddress') as HTMLInputElement).value;
+    const investorOnchainID = (document.getElementById('investorOnchainID') as HTMLInputElement).value;
+
+    smartContractRecoveryAddress(lostWalletAddress, newWalletAddress, investorOnchainID);
+    setLostWalletAddress("");
+    setNewWalletAddress("");
+    setInvestorOnchainID("");
+  };
+
+  const handleTransferTokensClick = () => {
+    setShowTransferTokensInput(!showTransferTokensInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleTransferTokens= () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    smartContractTransferTokens(walletAddress, amount);
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleUnfreezePartialTokensClick = () => {
+    setShowUnfreezePartialTokensInput(!showUnfreezePartialTokensInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleUnfreezePartialTokens= () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    smartContractUnfreezePartialTokens(walletAddress, amount);
+    setWalletAddress("");
+    setAmount("");
+  };
+
 
   const loggedInView = (
     <>
@@ -643,14 +895,148 @@ function App() {
           </button>
           {showBatchMintInput && (
             <div>
-              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Enter addresses list" />
-              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Enter amount list" />
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Addresses list, comma separated" />
+              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
               <button onClick={handleBatchMint} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
                 Batch Mint
               </button>
             </div>
           )}
         </div>
+
+        <div>
+          <button onClick={handleBatchBurnClick} className="card">
+            Batch Burn
+          </button>
+          {showBatchBurnInput && (
+            <div>
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Addresses list, comma separated" />
+              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
+              <button onClick={handleBatchBurn} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Burn
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleBatchTransferClick} className="card">
+            Batch Transfer
+          </button>
+          {showBatchTransferInput && (
+            <div>
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Addresses list, comma separated" />
+              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
+              <button onClick={handleBatchTransfer} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Transfer
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleBurnTokensClick} className="card">
+            Burn Tokens
+          </button>
+          {showBurnTokensInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleBurnTokens} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Burn
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleFreezePartialTokensClick} className="card">
+            Freeze Partial Tokens
+          </button>
+          {showFreezePartialTokensInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleFreezePartialTokens} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Freeze Partial Tokens
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleMintTokensClick} className="card">
+            Mint Tokens
+          </button>
+          {showMintTokensInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleMintTokens} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Mint
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={pauseSmartContract} className="card">
+            Pause smart contract
+          </button>
+        </div>
+
+        <div>
+          <button onClick={handleRecoveryAddressClick} className="card">
+            Recovery Address
+          </button>
+          {showRecoveryAddressInput && (
+            <div>
+              <input type="text" value={lostWalletAddress} id="lostWalletAddress" onChange={handleInputChange} placeholder="Enter lost wallet address" />
+              <input type="text" value={newWalletAddress} id="newWalletAddress" onChange={handleInputChange} placeholder="Enter new wallet address" />
+              <input type="text" value={investorOnchainID} id="investorOnchainID" onChange={handleInputChange} placeholder="Enter investor OnchainID" />
+              <button onClick={handleRecoveryAddress} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Recover
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleTransferTokensClick} className="card">
+            Transfer Tokens
+          </button>
+          {showTransferTokensInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleTransferTokens} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Transfer
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleUnfreezePartialTokensClick} className="card">
+            Unfreeze Partial Tokens
+          </button>
+          {showUnfreezePartialTokensInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleUnfreezePartialTokens} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Unfreeze Partial Tokens
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={unpauseSmartContract} className="card">
+            Unpause smart contract
+          </button>
+        </div>
+
 
       </div>
 
