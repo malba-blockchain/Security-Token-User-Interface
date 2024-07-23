@@ -155,7 +155,7 @@ async getAddresses(): Promise<any> {
         args: [walletAddress]
       }) as unknown as string;
 
-      return web3.utils.fromWei(balance, 'ether'); // Convert balance from wei to ether
+      return web3.utils.fromWei(balance, 'mwei'); // Convert balance from wei to ether
     } catch (error) {
       console.error(error);
       return error instanceof Error ? error.message : "An error occurred";
@@ -176,7 +176,7 @@ async getAddresses(): Promise<any> {
         args: [ownerAddress, spenderAddress]
       }) as unknown as string;
   
-      return web3.utils.fromWei(allowance, 'ether'); // Convert balance from wei to ether
+      return web3.utils.fromWei(allowance, 'mwei'); // Convert balance from wei to ether
     } catch (error) {
       console.error(error);
       return error instanceof Error ? error.message : "An error occurred";
@@ -196,8 +196,29 @@ async getAddresses(): Promise<any> {
         functionName: 'getFrozenTokens',
         args: [walletAddress]
       }) as unknown as string;
+
+      return web3.utils.fromWei(frozenTokens, 'mwei'); // Convert balance from wei to ether
+    } catch (error) {
+      console.error(error);
+      return error instanceof Error ? error.message : "An error occurred";
+    }
+  }
+
+  async smartContractHasRole(role: any, walletAddress: any): Promise<string> {
+    try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      });
+      
+      const hasRole: string = await publicClient.readContract({
+        address: mainSmartContractAddress,
+        abi: ERC3643_ABI,
+        functionName: 'hasRole',
+        args: [role, walletAddress]
+      }) as unknown as string;
   
-      return web3.utils.fromWei(frozenTokens, 'ether'); // Convert balance from wei to ether
+      return hasRole;
     } catch (error) {
       console.error(error);
       return error instanceof Error ? error.message : "An error occurred";
@@ -346,7 +367,7 @@ async getAddresses(): Promise<any> {
         functionName: 'totalSupply',
       }) as unknown as string;
       
-      return web3.utils.fromWei(totalSupply, 'ether'); // Convert balance from wei to ether;
+      return web3.utils.fromWei(totalSupply, 'mwei'); // Convert balance from wei to ether;
     } catch (error) {
       return error as string;
     }
@@ -421,6 +442,36 @@ async getAddresses(): Promise<any> {
     }
   }
 
+  async smartContractBatchFreezePartialTokens(_addressesList:any, _amounts:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'batchFreezePartialTokens',
+              args: [_addressesList, _amounts]
+          }
+      )
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
   async smartContractBatchMint(_addressesList:any, _amounts:any): Promise<any> {
     try {
       const publicClient = createPublicClient({
@@ -450,6 +501,40 @@ async getAddresses(): Promise<any> {
       //const result = "Minted: " + dataDecimal.toString() + ", to: "+ ;
       
       return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractBatchSetAddressFrozen(_addressesList: any, _booleanList: any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      })
+
+      const walletClient = createWalletClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      });
+
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+        {
+          account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+          address: mainSmartContractAddress,
+          abi: ERC3643_ABI,
+          functionName: 'batchSetAddressFrozen',
+          args: [_addressesList, _booleanList]
+        }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      //const dataDecimal = BigInt(receipt.logs[0].data);
+      //const result = "Minted: " + dataDecimal.toString() + ", to: "+ ;
+
+      return this.toObject(receipt);
     } catch (error) {
       return error;
     }
@@ -486,6 +571,36 @@ async getAddresses(): Promise<any> {
     }
   }
 
+  async smartContractBatchForcedTransfer(_fromList:any, _addressesList:any, _amounts:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'batchForcedTransfer',
+              args: [_fromList, _addressesList, _amounts]
+          }
+      )
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
   async smartContractBatchTransfer(_addressesList:any, _amounts:any): Promise<any> {
     try {
       const publicClient = createPublicClient({
@@ -509,6 +624,66 @@ async getAddresses(): Promise<any> {
           }
       )
 
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractBatchTransferFrom(_fromList:any, _addressesList:any, _amounts:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'batchTransferFrom',
+              args: [_fromList, _addressesList, _amounts]
+          }
+      )
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractBatchUnfreezePartialTokens(_addressesList:any, _amounts:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'batchUnfreezePartialTokens',
+              args: [_addressesList, _amounts]
+          }
+      )
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       return this.toObject(receipt); 

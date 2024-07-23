@@ -80,6 +80,7 @@ IV. Create interactions with the deployed smart contract using web3auth interfac
 -Compliance DONE
 -Decimals DONE
 -GetFrozenTokens DONE
+-HasRole DONE
 -IsFrozen DONE
 -Name DONE
 -OnchainID DONE
@@ -87,19 +88,37 @@ IV. Create interactions with the deployed smart contract using web3auth interfac
 -Symbol DONE
 -TotalSupply DONE
 
--Approve  DONE
--batchMint DONE
+-Approve DONE
 -batchBurn DONE
+-batchForcedTransfer  DONE
+-batchFreezePartialTokens DONE
+-batchMint DONE
+-batchSetAddressFrozen DONE
 -batchTransfer DONE
+-batchTransferFrom 
+-batchUnfreezePartialTokens DONE
 -burn DONE
+-decreaseAllowance 
+-forcedTransfer 
 -freeze partial tokens DONE
+-increaseAllowance 
 -mint DONE
 -pause  DONE
--recoveryAddress
+-recoveryAddress 
+-renounceRole 
+-revokeRole 
+-setAddressFrozen 
+setOnchainID 
 -transfer DONE
+-transferFrom 
 -unfreeze partial tokens DONE
 -unpause DONE
 
+AGENT_ROLE
+0xcab5a0bfe0b79d2c4b1c2e02599fa044d115b7511f9659307cb4276950967709
+
+OWNER_ROLE
+0xb19546dff01e856fb3f010c267a7b1c60363cf8a4664e21cc89c26224620214e
 
 Token Contract Address:  0x60E5799fed9ACbdaF36e752a05468f1519b03c6f
 
@@ -113,16 +132,33 @@ Charlie Wallet:  0x34795B6a05543Fe097C8BbBc221e3119f27B793E
 Free Wallet: 0xc6442dbED945a1cf0B747994510a3bCCB8ECb693
 Charlie identity: 0xd30e99C61B55C360ece31e952B26793a723c0173
 
+DEPLOYER
+0xb44e0C06718534F27847e607B6AE9368798fB974,0xb44e0C06718534F27847e607B6AE9368798fB974,0xb44e0C06718534F27847e607B6AE9368798fB974
+
+ADMIN
+0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9,0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9,0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9
+
+ADAM, BOB & CHARLIE
 0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1,0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4,0x34795B6a05543Fe097C8BbBc221e3119f27B793E
 10000000,10000000,10000000
+20000000,20000000,20000000
+
+true,true,true
+false,false,false
 
 CONTINUE HERE: 
 
+ERROR 1
 Find out why is the recovery function failing from the web3auth interface.
 
 Before that, do it from the etherscan interface. Pay a lot of gas.
 
 Then test it from scaffold eth. To read the code,
+
+
+ERROR 2
+
+Find out why is it failing the Batch Transfer From method. Even after the approval from the from Address
 
 
 3. Create user buttons to interact with tokens
@@ -133,6 +169,6 @@ Then test it from scaffold eth. To read the code,
 V. Launch online using vercel/simmilar
 
 
-
+Susana gutnam gutgam
 
 

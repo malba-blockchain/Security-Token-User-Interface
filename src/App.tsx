@@ -20,13 +20,22 @@ function App() {
   const [showTokenInput, setShowTokenInput] = useState<boolean>(false);
   const [showAllowanceInput, setShowAllowanceInput] = useState<boolean>(false);
   const [showGetFrozenTokensInput, setShowGetFrozenTokensInput] = useState<boolean>(false);
+  const [showHasRoleInput, setShowHasRoleInput] = useState<boolean>(false);
   const [showIsFrozenClickInput, setShowIsFrozenClickInput] = useState<boolean>(false);
   const [showApproveBalanceInput, setShowApproveBalanceInput] = useState<boolean>(false);
   const [showBatchMintInput, setShowBatchMintInput] = useState<boolean>(false);
+  const [showBatchFreezePartialTokensInput, setShowBatchFreezePartialTokensInput] = useState<boolean>(false);
   const [showBatchBurnInput, setShowBatchBurnInput] = useState<boolean>(false);
+  const [showBatchSetAddressFrozenInput, setShowBatchSetAddressFrozenInput] = useState<boolean>(false);
+
+  const [showBatchForcedTransferInput, setShowBatchForcedTransferInput] = useState<boolean>(false);
   const [showBatchTransferInput, setShowBatchTransferInput] = useState<boolean>(false);
+  const [showBatchTransferFromInput, setShowBatchTransferFromInput] = useState<boolean>(false);
+
   const [showBurnTokensInput, setShowBurnTokensInput] = useState<boolean>(false);
   const [showFreezePartialTokensInput, setShowFreezePartialTokensInput] = useState<boolean>(false);
+  const [showBatchUnfreezePartialTokensInput, setShowBatchUnfreezePartialTokensInput] = useState<boolean>(false);
+
   const [showMintTokensInput, setShowMintTokensInput] = useState<boolean>(false);
   const [showUnfreezePartialTokensInput, setShowUnfreezePartialTokensInput] = useState<boolean>(false);
   const [showTransferTokensInput, setShowTransferTokensInput] = useState<boolean>(false);
@@ -37,9 +46,12 @@ function App() {
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [ownerAddress, setOwnerAddress] = useState<string>("");
   const [spenderAddress, setSpenderAddress] = useState<string>("");
+  const [role, setRole] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [addressesList, setAddressesList] = useState<string>("");
+  const [fromList, setFromList] = useState<string>("");
   const [amounts, setAmounts] = useState<string>("");
+  const [booleanList, setBooleanList] = useState<string>("");
   const [lostWalletAddress, setLostWalletAddress] = useState<string>("");
   const [newWalletAddress, setNewWalletAddress] = useState<string>("");
   const [investorOnchainID, setInvestorOnchainID] = useState<string>("");
@@ -208,6 +220,16 @@ function App() {
     uiConsole(frozenTokens);
   };
 
+  const smartContractHasRole = async (role: any, walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const hasRole = await rpc.smartContractHasRole(role, walletAddress);
+    uiConsole(hasRole);
+  };
+
   const getCompliance= async () => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -249,6 +271,21 @@ function App() {
     uiConsole(approveBalance);
   };
 
+  const smartContractBatchFreezePartialTokens = async (addressesList: any, amounts:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    // Split the comma-separated strings into arrays
+    const _addressesList = addressesList.split(',');
+    const _amounts = amounts.split(',');
+
+    const rpc = new RPC(provider);
+    uiConsole("Processing batch freeze partial tokens...");
+    const batchFreezePartialTokens = await rpc.smartContractBatchFreezePartialTokens(_addressesList, _amounts);
+    uiConsole(batchFreezePartialTokens);
+  };
+
   const smartContractBatchMint = async (addressesList: any, amounts:any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -262,6 +299,21 @@ function App() {
     uiConsole("Processing batch mint...");
     const batchMint = await rpc.smartContractBatchMint(_addressesList, _amounts);
     uiConsole(batchMint);
+  };
+
+  const smartContractBatchSetAddressFrozen = async (addressesList: any, booleanList:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    // Split the comma-separated strings into arrays
+    const _addressesList = addressesList.split(',');
+    const _booleanList = booleanList.split(',').map(Boolean);;
+
+    const rpc = new RPC(provider);
+    uiConsole("Processing batch set address frozen...");
+    const batchSetAddressFrozen = await rpc.smartContractBatchSetAddressFrozen(_addressesList, _booleanList);
+    uiConsole(batchSetAddressFrozen);
   };
 
   const smartContractBatchBurn = async (addressesList: any, amounts:any) => {
@@ -279,6 +331,22 @@ function App() {
     uiConsole(batchBurn);
   };
 
+  const smartContractBatchForcedTransfer = async (fromList:any, addressesList: any, amounts:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    // Split the comma-separated strings into arrays
+    const _fromList = fromList.split(',');
+    const _addressesList = addressesList.split(',');
+    const _amounts = amounts.split(',');
+
+    const rpc = new RPC(provider);
+    uiConsole("Processing batch forced transfer...");
+    const batchForcedTransfer = await rpc.smartContractBatchForcedTransfer(_fromList, _addressesList, _amounts);
+    uiConsole(batchForcedTransfer);
+  };
+
   const smartContractBatchTransfer = async (addressesList: any, amounts:any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -292,6 +360,37 @@ function App() {
     uiConsole("Processing batch transfer...");
     const batchTransfer = await rpc.smartContractBatchTransfer(_addressesList, _amounts);
     uiConsole(batchTransfer);
+  };
+
+  const smartContractBatchTransferFrom = async (fromList:any, addressesList: any, amounts:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    // Split the comma-separated strings into arrays
+    const _fromList = fromList.split(',');
+    const _addressesList = addressesList.split(',');
+    const _amounts = amounts.split(',');
+
+    const rpc = new RPC(provider);
+    uiConsole("Processing batch transfer from...");
+    const batchTransferFrom = await rpc.smartContractBatchTransferFrom(_fromList, _addressesList, _amounts);
+    uiConsole(batchTransferFrom);
+  };
+
+  const smartContractBatchUnfreezePartialTokens = async (addressesList: any, amounts:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    // Split the comma-separated strings into arrays
+    const _addressesList = addressesList.split(',');
+    const _amounts = amounts.split(',');
+
+    const rpc = new RPC(provider);
+    uiConsole("Processing batch unfreeze partial tokens...");
+    const batchUnfreezePartialTokens = await rpc.smartContractBatchUnfreezePartialTokens(_addressesList, _amounts);
+    uiConsole(batchUnfreezePartialTokens);
   };
 
   const smartContractBurnTokens = async (walletAddress: any, amount:any) => {
@@ -484,11 +583,20 @@ function App() {
     else if (event.target.id === 'spenderAddress') {
       setSpenderAddress(event.target.value);
     }
+    else if (event.target.id === 'role') {
+      setRole(event.target.value);
+    }
     else if (event.target.id === 'amount') {
       setAmount(event.target.value);
     }
+    else if (event.target.id === 'fromList') {
+      setFromList(event.target.value);
+    }
     else if (event.target.id === 'addressesList') {
       setAddressesList(event.target.value);
+    }
+    else if (event.target.id === 'booleanList') {
+      setBooleanList(event.target.value);
     }
     else if (event.target.id === 'amounts') {
       setAmounts(event.target.value);
@@ -550,6 +658,21 @@ function App() {
     setWalletAddress("");
   };
 
+  const handleHasRoleClick = () => {
+    setShowHasRoleInput(!showHasRoleInput); // Toggle Token input visibility
+    setRole("");
+    setWalletAddress("");
+  };
+  
+  const handleHasRole = () => {
+    const role = (document.getElementById('role') as HTMLInputElement).value;
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+
+    smartContractHasRole(role, walletAddress);
+    setRole("");
+    setWalletAddress("");
+  };
+  
   const handleIsFrozenClick = () => {
     setShowIsFrozenClickInput(!showIsFrozenClickInput); // Toggle Token input visibility
     setWalletAddress("");
@@ -575,6 +698,20 @@ function App() {
     setAmount("");
   };
 
+  const handleBatchFreezePartialTokensClick = () => {
+    setShowBatchFreezePartialTokensInput(!showBatchFreezePartialTokensInput); // Toggle Token input visibility
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchFreezePartialTokens= () => {
+    const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
+    const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
+    smartContractBatchFreezePartialTokens(addressesList, amounts);
+    setAddressesList("");
+    setAmounts("");
+  };
+
   const handleBatchMintClick = () => {
     setShowBatchMintInput(!showBatchMintInput); // Toggle Token input visibility
     setAddressesList("");
@@ -589,6 +726,20 @@ function App() {
     setAmounts("");
   };
 
+  const handleBatchSetAddressFrozenClick = () => {
+    setShowBatchSetAddressFrozenInput(!showBatchSetAddressFrozenInput); // Toggle Token input visibility
+    setAddressesList("");
+    setBooleanList("");
+  };
+
+  const handleBatchSetAddressFrozen= () => {
+    const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
+    const booleanList = (document.getElementById('booleanList') as HTMLInputElement).value;
+    smartContractBatchSetAddressFrozen(addressesList, booleanList);
+    setAddressesList("");
+    setBooleanList("");
+  };
+  
   const handleBatchBurnClick = () => {
     setShowBatchBurnInput(!showBatchBurnInput); // Toggle Token input visibility
     setAddressesList("");
@@ -603,6 +754,23 @@ function App() {
     setAmounts("");
   };
 
+  const handleBatchForcedTransferClick = () => {
+    setShowBatchForcedTransferInput(!showBatchForcedTransferInput); // Toggle Token input visibility
+    setFromList("");
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchForcedTransfer= () => {
+    const fromList = (document.getElementById('fromList') as HTMLInputElement).value;
+    const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
+    const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
+    smartContractBatchForcedTransfer(fromList, addressesList, amounts);
+    setFromList("");
+    setAddressesList("");
+    setAmounts("");
+  };
+
   const handleBatchTransferClick = () => {
     setShowBatchTransferInput(!showBatchTransferInput); // Toggle Token input visibility
     setAddressesList("");
@@ -613,6 +781,37 @@ function App() {
     const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
     const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
     smartContractBatchTransfer(addressesList, amounts);
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchTransferFromClick = () => {
+    setShowBatchTransferFromInput(!showBatchTransferFromInput); // Toggle Token input visibility
+    setFromList("");
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchTransferFrom= () => {
+    const fromList = (document.getElementById('fromList') as HTMLInputElement).value;
+    const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
+    const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
+    smartContractBatchTransferFrom(fromList, addressesList, amounts);
+    setFromList("");
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchUnfreezePartialTokensClick = () => {
+    setShowBatchUnfreezePartialTokensInput(!showBatchUnfreezePartialTokensInput); // Toggle Token input visibility
+    setAddressesList("");
+    setAmounts("");
+  };
+
+  const handleBatchUnfreezePartialTokens= () => {
+    const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
+    const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
+    smartContractBatchUnfreezePartialTokens(addressesList, amounts);
     setAddressesList("");
     setAmounts("");
   };
@@ -816,6 +1015,21 @@ function App() {
         </div>
 
         <div>
+          <button onClick={handleHasRoleClick} className="card">
+            Has Role
+          </button>
+          {showHasRoleInput && (
+            <div>
+              <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleHasRole} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Has Role
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
           <button onClick={getCompliance} className="card">
             Get Compliance
           </button>
@@ -890,21 +1104,6 @@ function App() {
         </div>
 
         <div>
-          <button onClick={handleBatchMintClick} className="card">
-            Batch Mint
-          </button>
-          {showBatchMintInput && (
-            <div>
-              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Addresses list, comma separated" />
-              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
-              <button onClick={handleBatchMint} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-                Batch Mint
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div>
           <button onClick={handleBatchBurnClick} className="card">
             Batch Burn
           </button>
@@ -920,6 +1119,67 @@ function App() {
         </div>
 
         <div>
+          <button onClick={handleBatchForcedTransferClick} className="card">
+            Batch Forced Transfer
+          </button>
+          {showBatchForcedTransferInput && (
+            <div>
+              <input type="text" value={fromList} id="fromList" onChange={handleInputChange} placeholder="From list, comma separated" />
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="To list, comma separated" />
+              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
+              <button onClick={handleBatchForcedTransfer} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Force Transfer
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleBatchFreezePartialTokensClick} className="card">
+            Batch Freeze Partial Tokens
+          </button>
+          {showBatchFreezePartialTokensInput && (
+            <div>
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Addresses list, comma separated" />
+              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
+              <button onClick={handleBatchFreezePartialTokens} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Freeze Partial Tokens
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleBatchMintClick} className="card">
+            Batch Mint
+          </button>
+          {showBatchMintInput && (
+            <div>
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Addresses list, comma separated" />
+              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
+              <button onClick={handleBatchMint} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Mint
+              </button>
+            </div>
+          )}
+        </div>
+          
+        <div>
+          <button onClick={handleBatchSetAddressFrozenClick} className="card">
+            Batch Set Address Frozen
+          </button>
+          {showBatchSetAddressFrozenInput && (
+            <div>
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Addresses list, comma separated" />
+              <input type="text" value={booleanList} id="booleanList" onChange={handleInputChange} placeholder="Boolean list, comma separated" />
+              <button onClick={handleBatchSetAddressFrozen} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Set Address Frozen
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
           <button onClick={handleBatchTransferClick} className="card">
             Batch Transfer
           </button>
@@ -929,6 +1189,37 @@ function App() {
               <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
               <button onClick={handleBatchTransfer} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
                 Batch Transfer
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleBatchTransferFromClick} className="card">
+            Batch Transfer From
+          </button>
+          {showBatchTransferFromInput && (
+            <div>
+              <input type="text" value={fromList} id="fromList" onChange={handleInputChange} placeholder="From list, comma separated" />
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="To list, comma separated" />
+              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
+              <button onClick={handleBatchTransferFrom} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Transfer From
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleBatchUnfreezePartialTokensClick} className="card">
+            Batch Unfreeze Partial Tokens
+          </button>
+          {showBatchUnfreezePartialTokensInput && (
+            <div>
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Addresses list, comma separated" />
+              <input type="text" value={amounts} id="amounts" onChange={handleInputChange} placeholder="Amount list, comma separated" />
+              <button onClick={handleBatchUnfreezePartialTokens} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Unfreeze Partial Tokens
               </button>
             </div>
           )}
