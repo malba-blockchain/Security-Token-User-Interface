@@ -19,10 +19,12 @@ function App() {
   const [showMaticInput, setShowMaticInput] = useState<boolean>(false);
   const [showTokenInput, setShowTokenInput] = useState<boolean>(false);
   const [showAllowanceInput, setShowAllowanceInput] = useState<boolean>(false);
+
   const [showGetFrozenTokensInput, setShowGetFrozenTokensInput] = useState<boolean>(false);
   const [showHasRoleInput, setShowHasRoleInput] = useState<boolean>(false);
   const [showIsFrozenClickInput, setShowIsFrozenClickInput] = useState<boolean>(false);
   const [showApproveBalanceInput, setShowApproveBalanceInput] = useState<boolean>(false);
+
   const [showBatchMintInput, setShowBatchMintInput] = useState<boolean>(false);
   const [showBatchFreezePartialTokensInput, setShowBatchFreezePartialTokensInput] = useState<boolean>(false);
   const [showBatchBurnInput, setShowBatchBurnInput] = useState<boolean>(false);
@@ -33,9 +35,13 @@ function App() {
   const [showBatchTransferFromInput, setShowBatchTransferFromInput] = useState<boolean>(false);
 
   const [showBurnTokensInput, setShowBurnTokensInput] = useState<boolean>(false);
+  const [showDecreaseAllowanceInput, setShowDecreaseAllowanceInput] = useState<boolean>(false);
+  
   const [showFreezePartialTokensInput, setShowFreezePartialTokensInput] = useState<boolean>(false);
   const [showBatchUnfreezePartialTokensInput, setShowBatchUnfreezePartialTokensInput] = useState<boolean>(false);
 
+  const [showIncreaseAllowanceInput, setShowIncreaseAllowanceInput] = useState<boolean>(false);
+  
   const [showMintTokensInput, setShowMintTokensInput] = useState<boolean>(false);
   const [showUnfreezePartialTokensInput, setShowUnfreezePartialTokensInput] = useState<boolean>(false);
   const [showTransferTokensInput, setShowTransferTokensInput] = useState<boolean>(false);
@@ -308,10 +314,9 @@ function App() {
     }
     // Split the comma-separated strings into arrays
     const _addressesList = addressesList.split(',');
-    const _booleanList = booleanList.split(',').map(Boolean);;
+    const _booleanList = booleanList.split(',').map((value: string) => value === 'true');
 
     const rpc = new RPC(provider);
-    uiConsole("Processing batch set address frozen...");
     const batchSetAddressFrozen = await rpc.smartContractBatchSetAddressFrozen(_addressesList, _booleanList);
     uiConsole(batchSetAddressFrozen);
   };
@@ -404,6 +409,17 @@ function App() {
     uiConsole(burnTokens);
   };
 
+  const smartContractDecreaseAllowance = async (spenderAddress: any, amount:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing decrease allowance...");
+    const decreaseAllowance = await rpc.smartContractDecreaseAllowance(spenderAddress, amount);
+    uiConsole(decreaseAllowance);
+  };
+
   const smartContractFreezePartialTokens = async (walletAddress: any, amount:any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -413,6 +429,17 @@ function App() {
     uiConsole("Processing partial tokens freeze...");
     const partialTokenFreeze = await rpc.smartContractFreezePartialTokens(walletAddress, amount);
     uiConsole(partialTokenFreeze);
+  };
+
+  const smartContractIncreaseAllowance = async (spenderAddress: any, amount:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing increase allowance...");
+    const increasellowance = await rpc.smartContractIncreaseAllowance(spenderAddress, amount);
+    uiConsole(increasellowance);
   };
 
   const smartContractMintTokens = async (walletAddress: any, amount:any) => {
@@ -614,7 +641,7 @@ function App() {
 
   const handleCheckBalance = () => {
     balanceOf(address);
-    setAddress("");
+    //setAddress("");
   };
 
   const handleMaticBalanceOfClick = () => {
@@ -643,8 +670,8 @@ function App() {
     const ownerAddress = (document.getElementById('ownerAddress') as HTMLInputElement).value;
     const spenderAddress = (document.getElementById('spenderAddress') as HTMLInputElement).value;
     smartContractAllowance(ownerAddress, spenderAddress);
-    setOwnerAddress("");
-    setSpenderAddress("");
+    //setOwnerAddress("");
+    //setSpenderAddress("");
   };
 
   const handleGetFrozenTokensClick = () => {
@@ -655,7 +682,7 @@ function App() {
   const handleGetFrozenTokens = () => {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     smartContractGetFrozenTokens(walletAddress);
-    setWalletAddress("");
+    //setWalletAddress("");
   };
 
   const handleHasRoleClick = () => {
@@ -669,8 +696,8 @@ function App() {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
 
     smartContractHasRole(role, walletAddress);
-    setRole("");
-    setWalletAddress("");
+    //setRole("");
+    //setWalletAddress("");
   };
   
   const handleIsFrozenClick = () => {
@@ -681,7 +708,7 @@ function App() {
   const handleIsFrozen = () => {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     smartContractIsFrozen(walletAddress);
-    setWalletAddress("");
+    //setWalletAddress("");
   };
 
   const handleApproveBalanceClick = () => {
@@ -694,7 +721,7 @@ function App() {
     const spenderAddress = (document.getElementById('spenderAddress') as HTMLInputElement).value;
     const amount = (document.getElementById('amount') as HTMLInputElement).value;
     smartContractApproveBalance(spenderAddress, amount);
-    setSpenderAddress("");
+    ////setSpenderAddress("");
     setAmount("");
   };
 
@@ -708,8 +735,8 @@ function App() {
     const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
     const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
     smartContractBatchFreezePartialTokens(addressesList, amounts);
-    setAddressesList("");
-    setAmounts("");
+    //setAddressesList("");
+    //setAmounts("");
   };
 
   const handleBatchMintClick = () => {
@@ -722,8 +749,8 @@ function App() {
     const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
     const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
     smartContractBatchMint(addressesList, amounts);
-    setAddressesList("");
-    setAmounts("");
+    //setAddressesList("");
+    //setAmounts("");
   };
 
   const handleBatchSetAddressFrozenClick = () => {
@@ -736,8 +763,8 @@ function App() {
     const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
     const booleanList = (document.getElementById('booleanList') as HTMLInputElement).value;
     smartContractBatchSetAddressFrozen(addressesList, booleanList);
-    setAddressesList("");
-    setBooleanList("");
+    //setAddressesList("");
+    //setBooleanList("");
   };
   
   const handleBatchBurnClick = () => {
@@ -750,8 +777,8 @@ function App() {
     const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
     const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
     smartContractBatchBurn(addressesList, amounts);
-    setAddressesList("");
-    setAmounts("");
+    //setAddressesList("");
+    //setAmounts("");
   };
 
   const handleBatchForcedTransferClick = () => {
@@ -766,9 +793,9 @@ function App() {
     const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
     const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
     smartContractBatchForcedTransfer(fromList, addressesList, amounts);
-    setFromList("");
-    setAddressesList("");
-    setAmounts("");
+    //setFromList("");
+    //setAddressesList("");
+    //setAmounts("");
   };
 
   const handleBatchTransferClick = () => {
@@ -781,8 +808,8 @@ function App() {
     const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
     const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
     smartContractBatchTransfer(addressesList, amounts);
-    setAddressesList("");
-    setAmounts("");
+    //setAddressesList("");
+    //setAmounts("");
   };
 
   const handleBatchTransferFromClick = () => {
@@ -797,9 +824,9 @@ function App() {
     const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
     const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
     smartContractBatchTransferFrom(fromList, addressesList, amounts);
-    setFromList("");
-    setAddressesList("");
-    setAmounts("");
+    //setFromList("");
+    //setAddressesList("");
+    //setAmounts("");
   };
 
   const handleBatchUnfreezePartialTokensClick = () => {
@@ -812,8 +839,8 @@ function App() {
     const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
     const amounts = (document.getElementById('amounts') as HTMLInputElement).value;
     smartContractBatchUnfreezePartialTokens(addressesList, amounts);
-    setAddressesList("");
-    setAmounts("");
+    //setAddressesList("");
+    //setAmounts("");
   };
 
   const handleBurnTokensClick = () => {
@@ -826,8 +853,22 @@ function App() {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     const amount = (document.getElementById('amount') as HTMLInputElement).value;
     smartContractBurnTokens(walletAddress, amount);
-    setWalletAddress("");
+    //setWalletAddress("");
+    //setAmount("");
+  };
+
+  const handleDecreaseAllowanceClick = () => {
+    setShowDecreaseAllowanceInput(!showDecreaseAllowanceInput); // Toggle Token input visibility
+    setSpenderAddress("");
     setAmount("");
+  };
+
+  const handleDecreaseAllowance = () => {
+    const spenderAddress = (document.getElementById('spenderAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    smartContractDecreaseAllowance(spenderAddress, amount);
+    //setSpenderAddress("");
+    //setAmount("");
   };
 
   const handleFreezePartialTokensClick = () => {
@@ -840,10 +881,24 @@ function App() {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     const amount = (document.getElementById('amount') as HTMLInputElement).value;
     smartContractFreezePartialTokens(walletAddress, amount);
-    setWalletAddress("");
+    //setWalletAddress("");
+    //setAmount("");
+  };
+
+  const handleIncreaseAllowanceClick = () => {
+    setShowIncreaseAllowanceInput(!showIncreaseAllowanceInput); // Toggle Token input visibility
+    setSpenderAddress("");
     setAmount("");
   };
 
+  const handleIncreaseAllowance = () => {
+    const spenderAddress = (document.getElementById('spenderAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    smartContractIncreaseAllowance(spenderAddress, amount);
+    //setSpenderAddress("");
+    //setAmount("");
+  };
+  
   const handleMintTokensClick = () => {
     setShowMintTokensInput(!showMintTokensInput); // Toggle Token input visibility
     setWalletAddress("");
@@ -854,8 +909,8 @@ function App() {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     const amount = (document.getElementById('amount') as HTMLInputElement).value;
     smartContractMintTokens(walletAddress, amount);
-    setWalletAddress("");
-    setAmount("");
+    //setWalletAddress("");
+    //setAmount("");
   };
 
   const handleRecoveryAddressClick = () => {
@@ -871,9 +926,9 @@ function App() {
     const investorOnchainID = (document.getElementById('investorOnchainID') as HTMLInputElement).value;
 
     smartContractRecoveryAddress(lostWalletAddress, newWalletAddress, investorOnchainID);
-    setLostWalletAddress("");
-    setNewWalletAddress("");
-    setInvestorOnchainID("");
+    //setLostWalletAddress("");
+    //setNewWalletAddress("");
+    //setInvestorOnchainID("");
   };
 
   const handleTransferTokensClick = () => {
@@ -886,8 +941,8 @@ function App() {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     const amount = (document.getElementById('amount') as HTMLInputElement).value;
     smartContractTransferTokens(walletAddress, amount);
-    setWalletAddress("");
-    setAmount("");
+    //setWalletAddress("");
+    //setAmount("");
   };
 
   const handleUnfreezePartialTokensClick = () => {
@@ -900,8 +955,8 @@ function App() {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     const amount = (document.getElementById('amount') as HTMLInputElement).value;
     smartContractUnfreezePartialTokens(walletAddress, amount);
-    setWalletAddress("");
-    setAmount("");
+    //setWalletAddress("");
+    //setAmount("");
   };
 
 
@@ -1088,6 +1143,7 @@ function App() {
 
       <h3>Smart contract write functions</h3>
       <div className="flex-container">
+
         <div>
           <button onClick={handleApproveBalanceClick} className="card">
             Approve Balance
@@ -1241,6 +1297,21 @@ function App() {
         </div>
 
         <div>
+          <button onClick={handleDecreaseAllowanceClick} className="card">
+            Decrease Allowance
+          </button>
+          {showDecreaseAllowanceInput && (
+            <div>
+              <input type="text" value={spenderAddress} id="spenderAddress" onChange={handleInputChange} placeholder="Enter spender address" />
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleDecreaseAllowance} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Decrease Allowance
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
           <button onClick={handleFreezePartialTokensClick} className="card">
             Freeze Partial Tokens
           </button>
@@ -1250,6 +1321,21 @@ function App() {
               <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
               <button onClick={handleFreezePartialTokens} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
               Freeze Partial Tokens
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleIncreaseAllowanceClick} className="card">
+            Increase Allowance
+          </button>
+          {showIncreaseAllowanceInput && (
+            <div>
+              <input type="text" value={spenderAddress} id="spenderAddress" onChange={handleInputChange} placeholder="Enter spender address" />
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleIncreaseAllowance} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Increase Allowance
               </button>
             </div>
           )}

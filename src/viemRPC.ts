@@ -727,6 +727,41 @@ async getAddresses(): Promise<any> {
     }
   }
 
+  async smartContractDecreaseAllowance(spenderAddress:any, amount:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'decreaseAllowance',
+              args: [spenderAddress, amount]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      const dataDecimal = BigInt(receipt.logs[0].data);
+
+      const result = "Total allowance: " + dataDecimal.toString() + ", to: "+ spenderAddress;
+      
+      return this.toObject(result); 
+    } catch (error) {
+      return error;
+    }
+  }
+
   async smartContractFreezePartialTokens(walletAddress:any, amount:any): Promise<any> {
     try {
       const publicClient = createPublicClient({
@@ -755,6 +790,41 @@ async getAddresses(): Promise<any> {
       const dataDecimal = BigInt(receipt.logs[0].data);
 
       const result = "Freezed: " + dataDecimal.toString() + ", to: "+ walletAddress;
+      
+      return this.toObject(result); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractIncreaseAllowance(spenderAddress:any, amount:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'increaseAllowance',
+              args: [spenderAddress, amount]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      const dataDecimal = BigInt(receipt.logs[0].data);
+
+      const result = "Total allowance: " + dataDecimal.toString() + ", to: "+ spenderAddress;
       
       return this.toObject(result); 
     } catch (error) {
