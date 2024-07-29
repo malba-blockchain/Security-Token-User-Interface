@@ -727,6 +727,41 @@ async getAddresses(): Promise<any> {
     }
   }
 
+  async smartContractForcedTransfer(ownerAddress:any, spenderAddress:any, amount:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+      
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'forcedTransfer',
+              args: [ownerAddress, spenderAddress, amount]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      const dataDecimal = BigInt(receipt.logs[0].data);
+
+      const result = "Forced transfer: " + dataDecimal.toString()+ " from: "+ ownerAddress + ", to: "+ spenderAddress;
+      
+      return this.toObject(result); 
+    } catch (error) {
+      return error;
+    }
+  }
+
   async smartContractDecreaseAllowance(spenderAddress:any, amount:any): Promise<any> {
     try {
       const publicClient = createPublicClient({
@@ -890,6 +925,100 @@ async getAddresses(): Promise<any> {
           }
       )
 
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractRenounceRole(role:any, walletAddress:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'renounceRole',
+              args: [role, walletAddress]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractRevokeRole(role:any, walletAddress:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'revokeRole',
+              args: [role, walletAddress]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+
+  async smartContractSetAddressFrozen(walletAddress:any, boolValue:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'setAddressFrozen',
+              args: [walletAddress, boolValue]
+          }
+      )
+      
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       return this.toObject(receipt); 

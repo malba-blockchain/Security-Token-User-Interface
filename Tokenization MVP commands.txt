@@ -95,19 +95,19 @@ IV. Create interactions with the deployed smart contract using web3auth interfac
 -batchMint DONE
 -batchSetAddressFrozen DONE
 -batchTransfer DONE
--batchTransferFrom 
+-batchTransferFrom  DONE
 -batchUnfreezePartialTokens DONE
 -burn DONE
--decreaseAllowance 
--forcedTransfer 
+-decreaseAllowance  DONE
+-forcedTransfer DONE
 -freeze partial tokens DONE
--increaseAllowance 
+-increaseAllowance DONE
 -mint DONE
 -pause  DONE
--recoveryAddress 
--renounceRole 
--revokeRole 
--setAddressFrozen 
+-recoveryAddress DONE? FInd out if I can update the recovery address using token admin not the wallet of the ower.
+-renounceRole DONE
+-revokeRole  DONE
+-setAddressFrozen  DONE
 setOnchainID 
 -transfer DONE
 -transferFrom 
@@ -120,6 +120,10 @@ AGENT_ROLE
 OWNER_ROLE
 0xb19546dff01e856fb3f010c267a7b1c60363cf8a4664e21cc89c26224620214e
 
+TOKEN_ROLE
+0xa7197c38d9c4c7450c7f2cd20d0a17cbe7c344190d6c82a6b49a146e62439ae4
+
+
 Token Contract Address:  0x60E5799fed9ACbdaF36e752a05468f1519b03c6f
 
 Deployer:  0xb44e0C06718534F27847e607B6AE9368798fB974
@@ -130,6 +134,7 @@ Bob Wallet:  0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4
 Charlie Wallet:  0x34795B6a05543Fe097C8BbBc221e3119f27B793E
 
 Free Wallet: 0xc6442dbED945a1cf0B747994510a3bCCB8ECb693
+Second recovery wallet: 0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8
 Charlie identity: 0xd30e99C61B55C360ece31e952B26793a723c0173
 
 DEPLOYER
@@ -146,19 +151,21 @@ ADAM, BOB & CHARLIE
 true,true,true
 false,false,false
 
+
+AGENT_ROLE: 0xcab5a0bfe0b79d2c4b1c2e02599fa044d115b7511f9659307cb4276950967709
+
 CONTINUE HERE: 
 
 ERROR 1
 Find out why is the recovery function failing from the web3auth interface.
 
+I know I need to add the new wallet address to the identity just like in the local testing. But that's not even working.
+
 Before that, do it from the etherscan interface. Pay a lot of gas.
 
 Then test it from scaffold eth. To read the code,
 
-
-ERROR 2
-
-Find out why is it failing the Batch Transfer From method. Even after the approval from the from Address
+SOLUTION: It was matter of time until the addKey function was executed (adding the new wallet address to the identity of the user. However it required to be signed with the same (lost wallet). Something not feasible because its supposed to be lost.
 
 
 3. Create user buttons to interact with tokens
@@ -169,6 +176,8 @@ Find out why is it failing the Batch Transfer From method. Even after the approv
 V. Launch online using vercel/simmilar
 
 
-Susana gutnam gutgam
+
+
+
 
 

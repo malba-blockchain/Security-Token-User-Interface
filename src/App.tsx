@@ -35,6 +35,8 @@ function App() {
   const [showBatchTransferFromInput, setShowBatchTransferFromInput] = useState<boolean>(false);
 
   const [showBurnTokensInput, setShowBurnTokensInput] = useState<boolean>(false);
+
+  const [showForcedTransferInput, setShowForcedTransferInput] = useState<boolean>(false);
   const [showDecreaseAllowanceInput, setShowDecreaseAllowanceInput] = useState<boolean>(false);
   
   const [showFreezePartialTokensInput, setShowFreezePartialTokensInput] = useState<boolean>(false);
@@ -44,7 +46,14 @@ function App() {
   
   const [showMintTokensInput, setShowMintTokensInput] = useState<boolean>(false);
   const [showUnfreezePartialTokensInput, setShowUnfreezePartialTokensInput] = useState<boolean>(false);
+
+  const [showRenounceRoleInput, setShowRenounceRoleInput] = useState<boolean>(false);
+
+  const [showRevokeRoleInput, setShowRevokeRoleInput] = useState<boolean>(false);
+  const [showSetAddressFrozenInput, setShowSetAddressFrozen] = useState<boolean>(false);
+
   const [showTransferTokensInput, setShowTransferTokensInput] = useState<boolean>(false);
+
   const [showRecoveryAddressInput, setShowRecoveryAddressInput] = useState<boolean>(false);
 
   
@@ -61,6 +70,7 @@ function App() {
   const [lostWalletAddress, setLostWalletAddress] = useState<string>("");
   const [newWalletAddress, setNewWalletAddress] = useState<string>("");
   const [investorOnchainID, setInvestorOnchainID] = useState<string>("");
+  const [boolValue, setBoolValue] = useState<string>("");
 
 
   useEffect(() => {
@@ -409,6 +419,17 @@ function App() {
     uiConsole(burnTokens);
   };
 
+  const smartContractForcedTransfer = async (ownerAddress:any, spenderAddress: any, amount:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing forced transfer...");
+    const forcedTransfer = await rpc.smartContractForcedTransfer(ownerAddress, spenderAddress, amount);
+    uiConsole(forcedTransfer);
+  };
+
   const smartContractDecreaseAllowance = async (spenderAddress: any, amount:any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -462,6 +483,40 @@ function App() {
     uiConsole("Processing recovery address...");
     const recoveryAddress = await rpc.smartContractRecoveryAddress(lostWalletAddress, newWalletAddress, investorOnchainID);
     uiConsole(recoveryAddress);
+  };
+
+  const smartContractRenounceRole = async (role: any, walletAddress:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing renounce role...");
+    const renounceRole = await rpc.smartContractRenounceRole(role, walletAddress);
+    uiConsole(renounceRole);
+  };
+
+  const smartContractRevokeRole = async (role: any, walletAddress:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing revoke role...");
+    const revokeRole = await rpc.smartContractRevokeRole(role, walletAddress);
+    uiConsole(revokeRole);
+  };
+
+  const smartContractSetAddressFrozen = async (walletAddress: any, boolValue:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    var _boolValue = (boolValue === 'true');
+    const rpc = new RPC(provider);
+    uiConsole("Processing set address frozen...");
+    const setAddressFrozen = await rpc.smartContractSetAddressFrozen(walletAddress, _boolValue);
+    uiConsole(setAddressFrozen);
   };
 
   const smartContractTransferTokens = async (walletAddress: any, amount:any) => {
@@ -636,6 +691,9 @@ function App() {
     }
     else if (event.target.id === 'investorOnchainID') {
       setInvestorOnchainID(event.target.value);
+    }
+    else if (event.target.id === 'boolValue') {
+      setBoolValue(event.target.value);
     }
   };
 
@@ -857,6 +915,22 @@ function App() {
     //setAmount("");
   };
 
+  const handleForcedTransferClick = () => {
+    setShowForcedTransferInput(!showForcedTransferInput); // Toggle Token input visibility
+    setOwnerAddress("");
+    setSpenderAddress("");
+    setAmount("");
+  };
+
+  const handleForcedTransfer = () => {
+    const ownerAddress = (document.getElementById('ownerAddress') as HTMLInputElement).value;
+    const spenderAddress = (document.getElementById('spenderAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    smartContractForcedTransfer(ownerAddress, spenderAddress, amount);
+    //setSpenderAddress("");
+    //setAmount("");
+  };
+
   const handleDecreaseAllowanceClick = () => {
     setShowDecreaseAllowanceInput(!showDecreaseAllowanceInput); // Toggle Token input visibility
     setSpenderAddress("");
@@ -929,6 +1003,49 @@ function App() {
     //setLostWalletAddress("");
     //setNewWalletAddress("");
     //setInvestorOnchainID("");
+  };
+
+  const handleRenounceRoleClick = () => {
+    setShowRenounceRoleInput(!showRenounceRoleInput); // Toggle Token input visibility
+    setRole("");
+    setWalletAddress("");
+  };
+
+  const handleRenounceRole = () => {
+    const role = (document.getElementById('role') as HTMLInputElement).value;
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractRenounceRole(role, walletAddress);
+    //setWalletAddress("");
+    //setAmount("");
+  };
+
+  const handleRevokeRoleClick = () => {
+    setShowRevokeRoleInput(!showRevokeRoleInput); // Toggle Token input visibility
+    setRole("");
+    setWalletAddress("");
+  };
+
+  const handleRevokeRole = () => {
+    const role = (document.getElementById('role') as HTMLInputElement).value;
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractRevokeRole(role, walletAddress);
+    //setWalletAddress("");
+    //setAmount("");
+  };
+
+  const handleSetAddressFrozenClick = () => {
+    setShowSetAddressFrozen(!showSetAddressFrozenInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setBoolValue("");
+  };
+
+  const handleSetAddressFrozen = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const boolValue = (document.getElementById('boolValue') as HTMLInputElement).value;
+  
+    smartContractSetAddressFrozen(walletAddress, boolValue);
+    //setWalletAddress("");
+    //setBoolValue("");
   };
 
   const handleTransferTokensClick = () => {
@@ -1297,6 +1414,22 @@ function App() {
         </div>
 
         <div>
+          <button onClick={handleForcedTransferClick} className="card">
+            Forced Transfer
+          </button>
+          {showForcedTransferInput && (
+            <div>
+              <input type="text" value={ownerAddress} id="ownerAddress" onChange={handleInputChange} placeholder="Enter owner address" />
+              <input type="text" value={spenderAddress} id="spenderAddress" onChange={handleInputChange} placeholder="Enter destination address" />
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleForcedTransfer} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Force Transfer
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
           <button onClick={handleDecreaseAllowanceClick} className="card">
             Decrease Allowance
           </button>
@@ -1373,6 +1506,51 @@ function App() {
               <input type="text" value={investorOnchainID} id="investorOnchainID" onChange={handleInputChange} placeholder="Enter investor OnchainID" />
               <button onClick={handleRecoveryAddress} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
                 Recover
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleRenounceRoleClick} className="card">
+            Renounce Role
+          </button>
+          {showRenounceRoleInput && (
+            <div>
+              <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleRenounceRole} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Renounce Role
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleRevokeRoleClick} className="card">
+            Revoke Role
+          </button>
+          {showRevokeRoleInput && (
+            <div>
+              <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleRevokeRole} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Revoke Role
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleSetAddressFrozenClick} className="card">
+          Set Address Frozen
+          </button>
+          {showSetAddressFrozenInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <input type="text" value={boolValue} id="boolValue" onChange={handleInputChange} placeholder="Enter boolean value" />
+              <button onClick={handleSetAddressFrozen} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Set Address Frozen
               </button>
             </div>
           )}
