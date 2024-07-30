@@ -52,7 +52,8 @@ Basic Compliance Deployment...
 Basic Compliance Contract Address:  0xbfdD5D76AB5A20BD5605aD40afF33d4211c20F21
 
 TokenOID Deployment...
-TokenOID Contract Address:  0x096C680201025483785c68A5B9cEDa1DDEa2dd4F
+TokenOID Contract Address: 0x096C680201025483785c68A5B9cEDa1DDEa2dd4F
+New TokenOID Contract Address: 0xBbe7682Ea77b0667aD2134Cd73d86Af61b12ff32
 
 Token Deployment...
 Token Contract Address:  0x60E5799fed9ACbdaF36e752a05468f1519b03c6f
@@ -163,4 +164,5 @@ yarn hardhat-verify --network polygonAmoy 0x2643B16B5D2D31c8Bf59f4E170Cb6B1BC27c
 14. DONE Charlie Identity (identityImplementationAuthority.address, charlieWallet.address) - arguments_charlie_identity.js
 
 yarn hardhat-verify --network polygonAmoy 0xd30e99C61B55C360ece31e952B26793a723c0173 --constructor-args scripts/arguments_charlie_identity.js
+
 

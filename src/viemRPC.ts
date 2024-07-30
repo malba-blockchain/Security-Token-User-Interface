@@ -141,6 +141,60 @@ async getAddresses(): Promise<any> {
     }
   }
 
+  async getAgentRole(): Promise<string> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+        
+      const agentRole: string = await publicClient.readContract({
+        address: mainSmartContractAddress,
+        abi: ERC3643_ABI,
+        functionName: 'AGENT_ROLE',
+      }) as unknown as string;
+      return agentRole;
+    } catch (error) {
+      return error as string;
+    }
+  }
+
+  async getDeFaultAdminRole(): Promise<string> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+        
+      const defaultAdminRole: string = await publicClient.readContract({
+        address: mainSmartContractAddress,
+        abi: ERC3643_ABI,
+        functionName: 'DEFAULT_ADMIN_ROLE',
+      }) as unknown as string;
+      return defaultAdminRole;
+    } catch (error) {
+      return error as string;
+    }
+  }
+
+  async getOwnerRole(): Promise<string> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+        
+      const ownerRole: string = await publicClient.readContract({
+        address: mainSmartContractAddress,
+        abi: ERC3643_ABI,
+        functionName: 'OWNER_ROLE',
+      }) as unknown as string;
+      return ownerRole;
+    } catch (error) {
+      return error as string;
+    }
+  }
+
   async smartContractBalanceOf(walletAddress: any): Promise<string> {
     try {
       const publicClient = createPublicClient({
@@ -198,6 +252,27 @@ async getAddresses(): Promise<any> {
       }) as unknown as string;
 
       return web3.utils.fromWei(frozenTokens, 'mwei'); // Convert balance from wei to ether
+    } catch (error) {
+      console.error(error);
+      return error instanceof Error ? error.message : "An error occurred";
+    }
+  }
+
+  async smartContractGetRoleAdmin(role: any): Promise<string> {
+    try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      });
+      
+      const adminRole: string = await publicClient.readContract({
+        address: mainSmartContractAddress,
+        abi: ERC3643_ABI,
+        functionName: 'ge',
+        args: [role]
+      }) as unknown as string;
+
+      return adminRole; // Convert balance from wei to ether
     } catch (error) {
       console.error(error);
       return error instanceof Error ? error.message : "An error occurred";
@@ -279,6 +354,24 @@ async getAddresses(): Promise<any> {
     } catch (error) {
       console.error(error);
       return error instanceof Error ? error.message : "An error occurred";
+    }
+  }
+  
+  async getIdentityRegistry(): Promise<string> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+        
+      const identityRegistry: string = await publicClient.readContract({
+        address: mainSmartContractAddress,
+        abi: ERC3643_ABI,
+        functionName: 'identityRegistry',
+      }) as unknown as string;
+      return identityRegistry;
+    } catch (error) {
+      return error as string;
     }
   }
 
@@ -995,7 +1088,6 @@ async getAddresses(): Promise<any> {
     }
   }
 
-
   async smartContractSetAddressFrozen(walletAddress:any, boolValue:any): Promise<any> {
     try {
       const publicClient = createPublicClient({
@@ -1021,6 +1113,37 @@ async getAddresses(): Promise<any> {
       
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
+      return this.toObject(receipt); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractSetOnchainID(onchainIDValue:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'setOnchainID',
+              args: [onchainIDValue]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      
       return this.toObject(receipt); 
     } catch (error) {
       return error;
@@ -1057,6 +1180,37 @@ async getAddresses(): Promise<any> {
       const result = "Transfered: " + dataDecimal.toString() + ", to: "+ walletAddress;
       
       return this.toObject(result); 
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractTransferFrom(ownerAddress:any, walletAddress:any, amount:any): Promise<any> {
+    try {
+      const publicClient = createPublicClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        })
+
+      const walletClient = createWalletClient({
+          chain: this.getViewChain(),
+          transport: custom(this.provider)
+        });
+
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+          {
+              account: '0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9',
+              address: mainSmartContractAddress,
+              abi: ERC3643_ABI,
+              functionName: 'transferFrom',
+              args: [ownerAddress, walletAddress, amount]
+          }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt); 
     } catch (error) {
       return error;
     }

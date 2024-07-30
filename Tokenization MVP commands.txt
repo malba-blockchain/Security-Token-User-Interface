@@ -75,12 +75,17 @@ IV. Create interactions with the deployed smart contract using web3auth interfac
 1. Interact with the already deployed contract. DONE
 
 2. Create admin buttons to interact with token
+-AGENT_ROLE DONE
+-DEFAULT_ADMIN_ROLE DONE
+-OWNER_ROLE DONE
 -BalanceOf DONE
 -Allowance DONE
 -Compliance DONE
 -Decimals DONE
 -GetFrozenTokens DONE
+-GetRoleAdmin DONE
 -HasRole DONE
+-IdentityRegistry DONE
 -IsFrozen DONE
 -Name DONE
 -OnchainID DONE
@@ -103,14 +108,14 @@ IV. Create interactions with the deployed smart contract using web3auth interfac
 -freeze partial tokens DONE
 -increaseAllowance DONE
 -mint DONE
--pause  DONE
--recoveryAddress DONE? FInd out if I can update the recovery address using token admin not the wallet of the ower.
+-pause DONE
+-recoveryAddress DONE? Find out if I can update the recovery address using token admin not the wallet of the owner.
 -renounceRole DONE
 -revokeRole  DONE
 -setAddressFrozen  DONE
-setOnchainID 
+-setOnchainID DONE
 -transfer DONE
--transferFrom 
+-transferFrom  DONE
 -unfreeze partial tokens DONE
 -unpause DONE
 
@@ -156,17 +161,13 @@ AGENT_ROLE: 0xcab5a0bfe0b79d2c4b1c2e02599fa044d115b7511f9659307cb4276950967709
 
 CONTINUE HERE: 
 
-ERROR 1
-Find out why is the recovery function failing from the web3auth interface.
+Check out whats the official process of recovery address.
 
-I know I need to add the new wallet address to the identity just like in the local testing. But that's not even working.
+Who can execute addKey() over the wallet of the investor. Besides the own investor.
 
-Before that, do it from the etherscan interface. Pay a lot of gas.
+If the investor losses their wallet they can not sign a message to add a new wallet to their identity.
 
-Then test it from scaffold eth. To read the code,
-
-SOLUTION: It was matter of time until the addKey function was executed (adding the new wallet address to the identity of the user. However it required to be signed with the same (lost wallet). Something not feasible because its supposed to be lost.
-
+Who manages the identity of the investor? Look at the RAPTOR original version too.
 
 3. Create user buttons to interact with tokens
 
