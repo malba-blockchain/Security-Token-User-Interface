@@ -110,6 +110,7 @@ IV. Create interactions with the deployed smart contract using web3auth interfac
 -mint DONE
 -pause DONE
 -recoveryAddress DONE? Find out if I can update the recovery address using token admin not the wallet of the owner.
+-AddAddressIdentityRecover (old walletAddress, new wallet address, identityToRecover)
 -renounceRole DONE
 -revokeRole  DONE
 -setAddressFrozen  DONE
@@ -122,6 +123,9 @@ IV. Create interactions with the deployed smart contract using web3auth interfac
 AGENT_ROLE
 0xcab5a0bfe0b79d2c4b1c2e02599fa044d115b7511f9659307cb4276950967709
 
+ADMIN_ROLE
+0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
+
 OWNER_ROLE
 0xb19546dff01e856fb3f010c267a7b1c60363cf8a4664e21cc89c26224620214e
 
@@ -133,6 +137,7 @@ Token Contract Address:  0x60E5799fed9ACbdaF36e752a05468f1519b03c6f
 
 Deployer:  0xb44e0C06718534F27847e607B6AE9368798fB974
 Token Admin:  0x7a82c50eDDc576d5Cd26b530424D7d465D311bB9
+Token Admin Identity Contract: 0xE8dfE7810D8Db63C61632e7a5b0e0aaD717566F3
 
 Adam Wallet:  0x6Fbc023ACCBA56c1b32bDaFA2F27D4cd58145AB1
 Bob Wallet:  0x9a4B007a10E1d1EC63157c8D69eBa76F30B4a2B4
@@ -157,17 +162,25 @@ true,true,true
 false,false,false
 
 
-AGENT_ROLE: 0xcab5a0bfe0b79d2c4b1c2e02599fa044d115b7511f9659307cb4276950967709
-
 CONTINUE HERE: 
 
-Check out whats the official process of recovery address.
+Add functionalities to interact with the Identity Registry.
 
-Who can execute addKey() over the wallet of the investor. Besides the own investor.
+.hasRole(address UserAddress) DONE
+.identity(address UserAddress) DONE
+.investorCountry(address UserAddress) DONE
+.isVerified(address UserAddress) DONE
 
-If the investor losses their wallet they can not sign a message to add a new wallet to their identity.
+BatchRegisterIdentity DONE (to be tested)
+DeleteIdentity DONE
+GrantRole THIS IS THE NEXT ONE BASED ON TOKEN GRANT ROLE
+RegisterIdentity DONE
+UpdateCountry
+UpdateIdentity
+RenounceRole
+RevokeRole
 
-Who manages the identity of the investor? Look at the RAPTOR original version too.
+
 
 3. Create user buttons to interact with tokens
 

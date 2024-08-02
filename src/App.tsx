@@ -23,8 +23,15 @@ function App() {
   const [showGetFrozenTokensInput, setShowGetFrozenTokensInput] = useState<boolean>(false);
   const [showGetRoleAdminInput, setShowRoleAdminInput] = useState<boolean>(false);
 
-  const [showHasRoleInput, setShowHasRoleInput] = useState<boolean>(false);
-  const [showIsFrozenClickInput, setShowIsFrozenClickInput] = useState<boolean>(false);
+  const [showHasRoleInTokenInput, setShowHasRoleInTokenInput] = useState<boolean>(false);
+  const [showHasRoleInIdentityRegistryInput, setShowHasRoleInIdentityRegistryInput] = useState<boolean>(false);
+
+  const [showIsFrozenInput, setShowIsFrozenInput] = useState<boolean>(false);
+  const [showIdentityOfAccountInput, setShowIdentityOfAccountInput] = useState<boolean>(false);
+  const [showInvestorCountryInput, setShowInvestorCountryInput] = useState<boolean>(false);
+
+  const [showAccountIsVerifiedInput, setShowAccountIsVerifiedInput] = useState<boolean>(false);
+
   const [showApproveBalanceInput, setShowApproveBalanceInput] = useState<boolean>(false);
 
   const [showBatchMintInput, setShowBatchMintInput] = useState<boolean>(false);
@@ -33,6 +40,8 @@ function App() {
   const [showBatchSetAddressFrozenInput, setShowBatchSetAddressFrozenInput] = useState<boolean>(false);
 
   const [showBatchForcedTransferInput, setShowBatchForcedTransferInput] = useState<boolean>(false);
+  const [showBatchRegisterIdentityInput, setShowBatchRegisterIdentityInput] = useState<boolean>(false);
+  
   const [showBatchTransferInput, setShowBatchTransferInput] = useState<boolean>(false);
   const [showBatchTransferFromInput, setShowBatchTransferFromInput] = useState<boolean>(false);
 
@@ -49,9 +58,16 @@ function App() {
   const [showMintTokensInput, setShowMintTokensInput] = useState<boolean>(false);
   const [showUnfreezePartialTokensInput, setShowUnfreezePartialTokensInput] = useState<boolean>(false);
 
+  const [showDeleteIdentityInput, setShowDeleteIdentityInput] = useState<boolean>(false);
+
+  const [showRegisterIdentityInput, setShowRegisterIdentityInput] = useState<boolean>(false);
+
   const [showRenounceRoleInput, setShowRenounceRoleInput] = useState<boolean>(false);
 
   const [showRevokeRoleInput, setShowRevokeRoleInput] = useState<boolean>(false);
+
+  const [showGrantRoleInTokenInput, setShowGrantRoleInTokenInput] = useState<boolean>(false);
+
   const [showSetAddressFrozenInput, setShowSetAddressFrozen] = useState<boolean>(false);
 
   const [showTransferTokensInput, setShowTransferTokensInput] = useState<boolean>(false);
@@ -61,14 +77,19 @@ function App() {
 
   const [showRecoveryAddressInput, setShowRecoveryAddressInput] = useState<boolean>(false);
 
+  const [showAddAddressIdentityRecoverInput, setShowAddAddressIdentityRecoverInput] = useState<boolean>(false);
 
   const [address, setAddress] = useState<string>("");
   const [walletAddress, setWalletAddress] = useState<string>("");
+  const [identityAddress, setIdentityAddress] = useState<string>("");
+  const [country, setCountry] = useState<string>("");
   const [ownerAddress, setOwnerAddress] = useState<string>("");
   const [spenderAddress, setSpenderAddress] = useState<string>("");
   const [role, setRole] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [addressesList, setAddressesList] = useState<string>("");
+  const [identitiesList, setIdentitiesList] = useState<string>("");
+  const [countriesList, setCountriesList] = useState<string>("");
   const [fromList, setFromList] = useState<string>("");
   const [amounts, setAmounts] = useState<string>("");
   const [booleanList, setBooleanList] = useState<string>("");
@@ -282,13 +303,23 @@ function App() {
     uiConsole(adminRole);
   };
 
-  const smartContractHasRole = async (role: any, walletAddress: any) => {
+  const smartContractHasRoleInToken = async (role: any, walletAddress: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
       return;
     }
     const rpc = new RPC(provider);
-    const hasRole = await rpc.smartContractHasRole(role, walletAddress);
+    const hasRole = await rpc.smartContractHasRoleInToken(role, walletAddress);
+    uiConsole(hasRole);
+  };
+
+  const smartContractHasRoleInIdentityRegistry= async (role: any, walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const hasRole = await rpc.smartContractHasRoleInIdentityRegistry(role, walletAddress);
     uiConsole(hasRole);
   };
 
@@ -322,6 +353,36 @@ function App() {
     uiConsole(isFrozen);
   };
 
+  const smartContractIdentityOfAccount = async (walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const identityOfAccout = await rpc.smartContractIdentityOfAccount(walletAddress);
+    uiConsole(identityOfAccout);
+  };
+
+  const smartContractInvestorCountry = async (walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const investorCountry = await rpc.smartContractInvestorCountry(walletAddress);
+    uiConsole(investorCountry);
+  };
+
+  const smartContractAccountIsVerified = async (walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const accountIsVerified = await rpc.smartContractAccountIsVerified(walletAddress);
+    uiConsole(accountIsVerified);
+  };
+  
   const smartContractApproveBalance = async (spenderAddress: any, amount: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -406,6 +467,22 @@ function App() {
     uiConsole("Processing batch forced transfer...");
     const batchForcedTransfer = await rpc.smartContractBatchForcedTransfer(_fromList, _addressesList, _amounts);
     uiConsole(batchForcedTransfer);
+  };
+
+  const smartContractBatchRegisterIdentity = async (addressesList: any, identitiesList: any, countriesList: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    // Split the comma-separated strings into arrays
+    const _addressesList = addressesList.split(',');
+    const _identitiesList = identitiesList.split(',');
+    const _countriesList = countriesList.split(',');
+
+    const rpc = new RPC(provider);
+    uiConsole("Processing batch register identity transfer...");
+    const batchRegisterIdentityTransfer = await rpc.smartContractBatchRegisterIdentity(_addressesList, _identitiesList, _countriesList);
+    uiConsole(batchRegisterIdentityTransfer);
   };
 
   const smartContractBatchTransfer = async (addressesList: any, amounts: any) => {
@@ -531,6 +608,17 @@ function App() {
     uiConsole(recoveryAddress);
   };
 
+  const smartContractAddAddressIdentityRecover = async (lostWalletAddress: any, newWalletAddress: any, investorOnchainID: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing add address for recovery...");
+    const addAddressForRecovery = await rpc.smartContractAddAddressIdentityRecover(lostWalletAddress, newWalletAddress, investorOnchainID);
+    uiConsole(addAddressForRecovery);
+  };
+
   const smartContractRenounceRole = async (role: any, walletAddress: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -551,6 +639,17 @@ function App() {
     uiConsole("Processing revoke role...");
     const revokeRole = await rpc.smartContractRevokeRole(role, walletAddress);
     uiConsole(revokeRole);
+  };
+
+  const smartContractGrantRoleInToken = async (role: any, walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing grant role...");
+    const grantRoleInToken = await rpc.smartContractGrantRoleInToken(role, walletAddress);
+    uiConsole(grantRoleInToken);
   };
 
   const smartContractSetAddressFrozen = async (walletAddress: any, boolValue: any) => {
@@ -608,6 +707,32 @@ function App() {
     const partialTokenUnfreeze = await rpc.smartContractUnfreezePartialTokens(walletAddress, amount);
     uiConsole(partialTokenUnfreeze);
   };
+
+  const smartContractDeleteIdentity = async (walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing delete identity...");
+    const deleteIdentity = await rpc.smartContractDeleteIdentity(walletAddress);
+    uiConsole(deleteIdentity);
+  };
+
+  const smartContractRegisterIdentity = async (walletAddress: any, identityAddress: any, country:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing register identity...");
+    const registerIdentity = await rpc.smartContractRegisterIdentity(walletAddress, identityAddress, country);
+    uiConsole(registerIdentity);
+  };
+
+
+  
+
 
   const getIdentityRegistry = async () => {
     if (!provider) {
@@ -775,6 +900,12 @@ function App() {
     else if (event.target.id === 'onchainIDValue') {
       setOnchainIDValue(event.target.value);
     }
+    else if (event.target.id === 'identityAddress') {
+      setIdentityAddress(event.target.value);
+    }
+    else if (event.target.id === 'country') {
+      setCountry(event.target.value);
+    }
   };
 
   const handleCheckBalance = () => {
@@ -834,23 +965,38 @@ function App() {
     //setRole("");
   };
 
-  const handleHasRoleClick = () => {
-    setShowHasRoleInput(!showHasRoleInput); // Toggle Token input visibility
+  const handleHasRoleInTokenClick = () => {
+    setShowHasRoleInTokenInput(!showHasRoleInTokenInput); // Toggle Token input visibility
     setRole("");
     setWalletAddress("");
   };
 
-  const handleHasRole = () => {
+  const handleHasRoleInToken = () => {
     const role = (document.getElementById('role') as HTMLInputElement).value;
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
 
-    smartContractHasRole(role, walletAddress);
+    smartContractHasRoleInToken(role, walletAddress);
+    //setRole("");
+    //setWalletAddress("");
+  };
+
+  const handleHasRoleInIdentityRegistryClick = () => {
+    setShowHasRoleInIdentityRegistryInput(!showHasRoleInIdentityRegistryInput); // Toggle Token input visibility
+    setRole("");
+    setWalletAddress("");
+  };
+
+  const handleHasRoleInIdentityRegistry = () => {
+    const role = (document.getElementById('role') as HTMLInputElement).value;
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+
+    smartContractHasRoleInIdentityRegistry (role, walletAddress);
     //setRole("");
     //setWalletAddress("");
   };
 
   const handleIsFrozenClick = () => {
-    setShowIsFrozenClickInput(!showIsFrozenClickInput); // Toggle Token input visibility
+    setShowIsFrozenInput(!showIsFrozenInput); // Toggle Token input visibility
     setWalletAddress("");
   };
 
@@ -860,6 +1006,38 @@ function App() {
     //setWalletAddress("");
   };
 
+  const handleIdentityOfAccountClick = () => {
+    setShowIdentityOfAccountInput(!showIdentityOfAccountInput); // Toggle Token input visibility
+    setWalletAddress("");
+  };
+
+  const handleIdentityOfAccount = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractIdentityOfAccount(walletAddress);
+    //setWalletAddress("");
+  };
+
+  const handleInvestorCountryClick = () => {
+    setShowInvestorCountryInput(!showInvestorCountryInput); // Toggle Token input visibility
+    setWalletAddress("");
+  };
+
+  const handleInvestorCountry = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractInvestorCountry(walletAddress);
+    //setWalletAddress("");
+  };
+
+  const handleAccountIsVerifiedClick = () => {
+    setShowAccountIsVerifiedInput(!showAccountIsVerifiedInput); // Toggle Token input visibility
+    setWalletAddress("");
+  };
+
+  const handleAccountIsVerified = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractAccountIsVerified(walletAddress);
+    //setWalletAddress("");
+  };
   const handleApproveBalanceClick = () => {
     setShowApproveBalanceInput(!showApproveBalanceInput); // Toggle Token input visibility
     setSpenderAddress("");
@@ -945,6 +1123,23 @@ function App() {
     //setFromList("");
     //setAddressesList("");
     //setAmounts("");
+  };
+
+  const handleBatchRegisterIdentityClick = () => {
+    setShowBatchRegisterIdentityInput(!showBatchRegisterIdentityInput); // Toggle Token input visibility
+    setAddressesList("");
+    setIdentitiesList("");
+    setCountriesList("");
+  };
+
+  const handleBatchRegisterIdentity = () => {
+    const addressesList = (document.getElementById('addressesList') as HTMLInputElement).value;
+    const identitiesList = (document.getElementById('identitiesList') as HTMLInputElement).value;
+    const countriesList = (document.getElementById('countriesList') as HTMLInputElement).value;
+    smartContractBatchRegisterIdentity(addressesList, identitiesList, countriesList);
+    //setAddressesList("");
+    //setIdentitiesList("");
+    //setCountriesList("");
   };
 
   const handleBatchTransferClick = () => {
@@ -1096,6 +1291,25 @@ function App() {
     //setInvestorOnchainID("");
   };
 
+  const handleAddAddressIdentityRecoverClick = () => {
+    setShowAddAddressIdentityRecoverInput(!showAddAddressIdentityRecoverInput); // Toggle Token input visibility
+    setLostWalletAddress("");
+    setNewWalletAddress("");
+    setInvestorOnchainID("");
+  };
+
+  const handleAddAddressIdentityRecover = () => {
+    const lostWalletAddress = (document.getElementById('lostWalletAddress') as HTMLInputElement).value;
+    const newWalletAddress = (document.getElementById('newWalletAddress') as HTMLInputElement).value;
+    const investorOnchainID = (document.getElementById('investorOnchainID') as HTMLInputElement).value;
+
+    smartContractAddAddressIdentityRecover(lostWalletAddress, newWalletAddress, investorOnchainID);
+    //setLostWalletAddress("");
+    //setNewWalletAddress("");
+    //setInvestorOnchainID("");
+  };
+  
+
   const handleRenounceRoleClick = () => {
     setShowRenounceRoleInput(!showRenounceRoleInput); // Toggle Token input visibility
     setRole("");
@@ -1106,8 +1320,8 @@ function App() {
     const role = (document.getElementById('role') as HTMLInputElement).value;
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     smartContractRenounceRole(role, walletAddress);
+    //setRole("");
     //setWalletAddress("");
-    //setAmount("");
   };
 
   const handleRevokeRoleClick = () => {
@@ -1120,9 +1334,24 @@ function App() {
     const role = (document.getElementById('role') as HTMLInputElement).value;
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     smartContractRevokeRole(role, walletAddress);
+    //setRole("");
     //setWalletAddress("");
-    //setAmount("");
   };
+
+  const handleGrantRoleInTokenClick = () => {
+    setShowGrantRoleInTokenInput(!showGrantRoleInTokenInput); // Toggle Token input visibility
+    setRole("");
+    setWalletAddress("");
+  };
+
+  const handleGrantRoleInToken = () => {
+    const role = (document.getElementById('role') as HTMLInputElement).value;
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractGrantRoleInToken(role, walletAddress);
+    //setRole("");
+    //setWalletAddress("");
+  };
+
 
   const handleSetAddressFrozenClick = () => {
     setShowSetAddressFrozen(!showSetAddressFrozenInput); // Toggle Token input visibility
@@ -1196,10 +1425,41 @@ function App() {
     //setAmount("");
   };
 
+  const handleDeleteIdentityClick = () => {
+    setShowDeleteIdentityInput(!showDeleteIdentityInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setAmount("");
+  };
+
+  const handleDeleteIdentity = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractDeleteIdentity(walletAddress);
+    //setWalletAddress("");
+  };
+
+  const handleRegisterIdentityClick = () => {
+    setShowRegisterIdentityInput(!showRegisterIdentityInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setIdentityAddress("");
+    setCountry("");
+  };
+
+  const handleRegisterIdentity = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
+    const country = (document.getElementById('country') as HTMLInputElement).value;
+    smartContractRegisterIdentity(walletAddress, identityAddress, country);
+    //setWalletAddress("");
+    //setIdentityAddress("");
+    //setCountry("");
+  };
+
+
+  
 
   const loggedInView = (
     <>
-      <h3>Web3Auth functions</h3>
+      <h3>Web3Auth Functions</h3>
       <div className="flex-container">
         <div>
           <button onClick={getUserInfo} className="card">
@@ -1261,7 +1521,7 @@ function App() {
         </div>
       </div>
 
-      <h3>Smart contract read functions</h3>
+      <h3>Token Smart Contract Read Functions</h3>
 
       <div className="flex-container">
 
@@ -1282,7 +1542,6 @@ function App() {
             Get Owner Role
           </button>
         </div>
-
 
         <div>
           <button onClick={handleTokenBalanceOfClick} className="card">
@@ -1354,15 +1613,15 @@ function App() {
         </div>
 
         <div>
-          <button onClick={handleHasRoleClick} className="card">
-            Has Role
+          <button onClick={handleHasRoleInTokenClick} className="card">
+            Has Role in Token
           </button>
-          {showHasRoleInput && (
+          {showHasRoleInTokenInput && (
             <div>
               <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
-              <button onClick={handleHasRole} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-                Has Role
+              <button onClick={handleHasRoleInToken} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Has Role in Token
               </button>
             </div>
           )}
@@ -1378,7 +1637,7 @@ function App() {
           <button onClick={handleIsFrozenClick} className="card">
             Is Frozen
           </button>
-          {showIsFrozenClickInput && (
+          {showIsFrozenInput && (
             <div>
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
               <button onClick={handleIsFrozen} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
@@ -1419,7 +1678,7 @@ function App() {
         </div>
       </div>
 
-      <h3>Smart contract write functions</h3>
+      <h3>Token Smart Contract Write Functions</h3>
       <div className="flex-container">
 
         <div>
@@ -1451,7 +1710,7 @@ function App() {
             </div>
           )}
         </div>
-
+        
         <div>
           <button onClick={handleBatchForcedTransferClick} className="card">
             Batch Forced Transfer
@@ -1673,6 +1932,22 @@ function App() {
         </div>
 
         <div>
+          <button onClick={handleAddAddressIdentityRecoverClick} className="card">
+            Add Address for Identity Recover
+          </button>
+          {showAddAddressIdentityRecoverInput && (
+            <div>
+              <input type="text" value={lostWalletAddress} id="lostWalletAddress" onChange={handleInputChange} placeholder="Enter current wallet address" />
+              <input type="text" value={newWalletAddress} id="newWalletAddress" onChange={handleInputChange} placeholder="Enter new wallet address" />
+              <input type="text" value={investorOnchainID} id="investorOnchainID" onChange={handleInputChange} placeholder="Enter investor OnchainID" />
+              <button onClick={handleAddAddressIdentityRecover} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Add Address
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
           <button onClick={handleRenounceRoleClick} className="card">
             Renounce Role
           </button>
@@ -1697,6 +1972,21 @@ function App() {
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
               <button onClick={handleRevokeRole} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
                 Revoke Role
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleGrantRoleInTokenClick} className="card">
+            Grant Role
+          </button>
+          {showGrantRoleInTokenInput && (
+            <div>
+              <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleGrantRoleInToken} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Grant Role
               </button>
             </div>
           )}
@@ -1783,10 +2073,121 @@ function App() {
           </button>
         </div>
 
+      </div>
+
+      <h3>Identity Registry Smart Contract Read Functions</h3>
+      <div className="flex-container">
+
+      <div>
+          <button onClick={handleHasRoleInIdentityRegistryClick} className="card">
+            Has Role in Identity Registry
+          </button>
+          {showHasRoleInIdentityRegistryInput && (
+            <div>
+              <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleHasRoleInIdentityRegistry} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Has Role in Identity Registry
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleIdentityOfAccountClick} className="card">
+            Identity of Account
+          </button>
+          {showIdentityOfAccountInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleIdentityOfAccount} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Identity of Account
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleInvestorCountryClick} className="card">
+            Investor Country
+          </button>
+          {showInvestorCountryInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleInvestorCountry} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Investor Country
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleAccountIsVerifiedClick} className="card">
+            Account is Verified
+          </button>
+          {showAccountIsVerifiedInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleAccountIsVerified} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Is Verified
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <h3>Identity Registry Smart Contract Write Functions</h3>
+      <div className="flex-container">
+
+      <div>
+          <button onClick={handleBatchRegisterIdentityClick} className="card">
+            Batch Register Identity
+          </button>
+          {showBatchRegisterIdentityInput && (
+            <div>
+              <input type="text" value={addressesList} id="addressesList" onChange={handleInputChange} placeholder="Addresses list, comma separated" />
+              <input type="text" value={identitiesList} id="identitiesList" onChange={handleInputChange} placeholder="Identities list, comma separated" />
+              <input type="text" value={countriesList} id="countriesList" onChange={handleInputChange} placeholder="Countries list, comma separated" />
+              <button onClick={handleBatchRegisterIdentity} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Batch Register Identity
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleDeleteIdentityClick} className="card">
+            Delete Identity
+          </button>
+          {showDeleteIdentityInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleDeleteIdentity} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Delete Identity
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleRegisterIdentityClick} className="card">
+            Register Identity
+          </button>
+          {showRegisterIdentityInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
+              <input type="text" value={country} id="country" onChange={handleInputChange} placeholder="Enter country code" />
+              <button onClick={handleRegisterIdentity} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Register Identity
+              </button>
+            </div>
+          )}
+        </div>
 
       </div>
 
-      <h3>|||Console returns|||</h3>
+      <h3>|||Console Returns|||</h3>
       <div id="console" style={{ whiteSpace: "pre-line" }}>
         <p style={{ whiteSpace: "pre-line" }}>Logged in Successfully!</p>
       </div>
