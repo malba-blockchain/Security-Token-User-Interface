@@ -29,6 +29,8 @@ Charlie Wallet:  0x34795B6a05543Fe097C8BbBc221e3119f27B793E
 Free Wallet: 0xc6442dbED945a1cf0B747994510a3bCCB8ECb693
 Second recovery wallet: 0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8
 
+NEW ACCOUNT TO ADD: 0x9735eB61d172eC27eBf13b653fd239c7B1b80642
+
 ~~ Suite ~~
 
 Identity Implementation Contract Deployment...
@@ -167,3 +169,10 @@ yarn hardhat-verify --network polygonAmoy 0x2643B16B5D2D31c8Bf59f4E170Cb6B1BC27c
 yarn hardhat-verify --network polygonAmoy 0xd30e99C61B55C360ece31e952B26793a723c0173 --constructor-args scripts/arguments_charlie_identity.js
 
 
+const address = await this.getAccounts();
+
+
+
+0x62372F3B574A1731F75eC178c29c3DE8cC2Dd1E1
+0
+Some claim public data.

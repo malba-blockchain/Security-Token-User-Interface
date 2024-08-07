@@ -41,7 +41,7 @@ function App() {
 
   const [showBatchForcedTransferInput, setShowBatchForcedTransferInput] = useState<boolean>(false);
   const [showBatchRegisterIdentityInput, setShowBatchRegisterIdentityInput] = useState<boolean>(false);
-  
+
   const [showBatchTransferInput, setShowBatchTransferInput] = useState<boolean>(false);
   const [showBatchTransferFromInput, setShowBatchTransferFromInput] = useState<boolean>(false);
 
@@ -68,6 +68,20 @@ function App() {
 
   const [showGrantRoleInTokenInput, setShowGrantRoleInTokenInput] = useState<boolean>(false);
 
+  const [showGrantRoleInIdentityRegistryInput, setShowGrantRoleInIdentityRegistryInput] = useState<boolean>(false);
+
+  const [showRenounceRoleInIdentityRegistryInput, setShowRenounceRoleInIdentityRegistryInput] = useState<boolean>(false);
+
+  const [showRevokeRoleInIdentityRegistryInput, setShowRevokeRoleInIdentityRegistryInput] = useState<boolean>(false);
+
+  const [showDeployIdentitySmartContractInput, setShowDeployIdentitySmartContractInput] = useState<boolean>(false);
+
+  const [showAddIdentityClaimInput, setShowAddIdentityClaimInput] = useState<boolean>(false);
+
+  const [showUpdateCountryInput, setUpdateCountryInput] = useState<boolean>(false);
+
+  const [showUpdateIdentityInput, setUpdateIdentityInput] = useState<boolean>(false);
+
   const [showSetAddressFrozenInput, setShowSetAddressFrozen] = useState<boolean>(false);
 
   const [showTransferTokensInput, setShowTransferTokensInput] = useState<boolean>(false);
@@ -82,6 +96,8 @@ function App() {
   const [address, setAddress] = useState<string>("");
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [identityAddress, setIdentityAddress] = useState<string>("");
+  const [topic, setTopic] = useState<string>("");
+  const [data, setData] = useState<string>("");
   const [country, setCountry] = useState<string>("");
   const [ownerAddress, setOwnerAddress] = useState<string>("");
   const [spenderAddress, setSpenderAddress] = useState<string>("");
@@ -313,7 +329,7 @@ function App() {
     uiConsole(hasRole);
   };
 
-  const smartContractHasRoleInIdentityRegistry= async (role: any, walletAddress: any) => {
+  const smartContractHasRoleInIdentityRegistry = async (role: any, walletAddress: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
       return;
@@ -382,7 +398,7 @@ function App() {
     const accountIsVerified = await rpc.smartContractAccountIsVerified(walletAddress);
     uiConsole(accountIsVerified);
   };
-  
+
   const smartContractApproveBalance = async (spenderAddress: any, amount: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -652,6 +668,83 @@ function App() {
     uiConsole(grantRoleInToken);
   };
 
+  const smartContractGrantRoleInIdentityRegistry = async (role: any, walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing grant role...");
+    const grantRoleInIdentityRegistry = await rpc.smartContractGrantRoleInIdentityRegistry(role, walletAddress);
+    uiConsole(grantRoleInIdentityRegistry);
+  };
+
+  const smartContractRenounceRoleInIdentityRegistry = async (role: any, walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing renounce role...");
+    const renounceRoleInIdentityRegistry = await rpc.smartContractRenounceRoleInIdentityRegistry(role, walletAddress);
+    uiConsole(renounceRoleInIdentityRegistry);
+  };
+
+  const smartContractRevokeRoleInIdentityRegistry = async (role: any, walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing revoke role...");
+    const revokeRoleInIdentityRegistry = await rpc.smartContractRevokeRoleInIdentityRegistry(role, walletAddress);
+    uiConsole(revokeRoleInIdentityRegistry);
+  };
+
+  const deployIdentitySmartContract = async (walletAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing identity smart contract deployment...");
+    const deployidentitySmartContract = await rpc.deployIdentitySmartContract(walletAddress);
+    uiConsole(deployidentitySmartContract);
+  };
+
+  const addIdentityClaimSmartContract = async (identityAddress: any, topic: any, data:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing add identity claim...");
+    const addIdentityClaimSmartContract = await rpc.addIdentityClaimSmartContract(identityAddress, topic, data);
+    uiConsole(addIdentityClaimSmartContract);
+  };
+  
+  const smartContractUpdateCountry = async (walletAddress: any, country: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing update country...");
+    const updateCountry = await rpc.smartContractUpdateCountry(walletAddress, country);
+    uiConsole(updateCountry);
+  };
+
+  const smartContractUpdateIdentity = async (walletAddress: any, identityAddress: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing update identity...");
+    const updateIdentity = await rpc.smartContractUpdateIdentity(walletAddress, identityAddress);
+    uiConsole(updateIdentity);
+  };
+
   const smartContractSetAddressFrozen = async (walletAddress: any, boolValue: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -719,7 +812,7 @@ function App() {
     uiConsole(deleteIdentity);
   };
 
-  const smartContractRegisterIdentity = async (walletAddress: any, identityAddress: any, country:any) => {
+  const smartContractRegisterIdentity = async (walletAddress: any, identityAddress: any, country: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
       return;
@@ -729,10 +822,6 @@ function App() {
     const registerIdentity = await rpc.smartContractRegisterIdentity(walletAddress, identityAddress, country);
     uiConsole(registerIdentity);
   };
-
-
-  
-
 
   const getIdentityRegistry = async () => {
     if (!provider) {
@@ -906,6 +995,18 @@ function App() {
     else if (event.target.id === 'country') {
       setCountry(event.target.value);
     }
+    else if (event.target.id === 'identitiesList') {
+      setIdentitiesList(event.target.value);
+    }
+    else if (event.target.id === 'countriesList') {
+      setCountriesList(event.target.value);
+    }
+    else if (event.target.id === 'topic') {
+      setTopic(event.target.value);
+    }
+    else if (event.target.id === 'data') {
+      setData(event.target.value);
+    }
   };
 
   const handleCheckBalance = () => {
@@ -990,7 +1091,7 @@ function App() {
     const role = (document.getElementById('role') as HTMLInputElement).value;
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
 
-    smartContractHasRoleInIdentityRegistry (role, walletAddress);
+    smartContractHasRoleInIdentityRegistry(role, walletAddress);
     //setRole("");
     //setWalletAddress("");
   };
@@ -1308,7 +1409,6 @@ function App() {
     //setNewWalletAddress("");
     //setInvestorOnchainID("");
   };
-  
 
   const handleRenounceRoleClick = () => {
     setShowRenounceRoleInput(!showRenounceRoleInput); // Toggle Token input visibility
@@ -1352,6 +1452,104 @@ function App() {
     //setWalletAddress("");
   };
 
+  const handleGrantRoleInIdentityRegistryClick = () => {
+    setShowGrantRoleInIdentityRegistryInput(!showGrantRoleInIdentityRegistryInput); // Toggle Token input visibility
+    setRole("");
+    setWalletAddress("");
+  };
+
+  const handleGrantRoleInIdentityRegistry = () => {
+    const role = (document.getElementById('role') as HTMLInputElement).value;
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractGrantRoleInIdentityRegistry(role, walletAddress);
+    //setRole("");
+    //setWalletAddress("");
+  };
+
+  const handleRenounceRoleInIdentityRegistryClick = () => {
+    setShowRenounceRoleInIdentityRegistryInput(!showRenounceRoleInIdentityRegistryInput); // Toggle Token input visibility
+    setRole("");
+    setWalletAddress("");
+  };
+
+  const handleRenounceRoleInIdentityRegistry = () => {
+    const role = (document.getElementById('role') as HTMLInputElement).value;
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractRenounceRoleInIdentityRegistry(role, walletAddress);
+    //setRole("");
+    //setWalletAddress("");
+  };
+
+  const handleRevokeRoleInIdentityRegistryClick = () => {
+    setShowRevokeRoleInIdentityRegistryInput(!showRevokeRoleInIdentityRegistryInput); // Toggle Token input visibility
+    setRole("");
+    setWalletAddress("");
+  };
+
+  const handleRevokeRoleInIdentityRegistry = () => {
+    const role = (document.getElementById('role') as HTMLInputElement).value;
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    smartContractRevokeRoleInIdentityRegistry(role, walletAddress);
+    //setRole("");
+    //setWalletAddress("");
+  };
+
+  const handleDeployIdentitySmartContractClick = () => {
+    setShowDeployIdentitySmartContractInput(!showDeployIdentitySmartContractInput); // Toggle Token input visibility
+    setWalletAddress("");
+  };
+
+  const handleDeployIdentitySmartContract = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    deployIdentitySmartContract(walletAddress);
+    //setWalletAddress("");
+  };
+
+
+  const handleAddIdentityClaimClick = () => {
+    setShowAddIdentityClaimInput(!showAddIdentityClaimInput); // Toggle Token input visibility
+    setIdentityAddress("");
+    setTopic("");
+    setData("");
+  };
+
+  const handleAddIdentityClaim = () => {
+    const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
+    const topic = (document.getElementById('topic') as HTMLInputElement).value;
+    const data = (document.getElementById('data') as HTMLInputElement).value;
+    addIdentityClaimSmartContract(identityAddress, topic, data);
+    //setIdentityAddress("");
+    //setTopic("");
+    //setData("");
+  };
+
+  const handleUpdateCountryClick = () => {
+    setUpdateCountryInput(!showUpdateCountryInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setCountry("");
+  };
+
+  const handleUpdateCountry = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const country = (document.getElementById('country') as HTMLInputElement).value;
+    smartContractUpdateCountry(walletAddress, country);
+    //setWalletAddress("");
+    //setCountry("");
+  };
+
+  const handleUpdateIdentityClick = () => {
+    setUpdateIdentityInput(!showUpdateIdentityInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setIdentityAddress("");
+  };
+
+  const handleUpdateIdentity = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
+    smartContractUpdateIdentity(walletAddress, identityAddress);
+    //setWalletAddress("");
+    //setIdentityAddress("");
+  };
 
   const handleSetAddressFrozenClick = () => {
     setShowSetAddressFrozen(!showSetAddressFrozenInput); // Toggle Token input visibility
@@ -1455,7 +1653,7 @@ function App() {
   };
 
 
-  
+
 
   const loggedInView = (
     <>
@@ -1710,7 +1908,7 @@ function App() {
             </div>
           )}
         </div>
-        
+
         <div>
           <button onClick={handleBatchForcedTransferClick} className="card">
             Batch Forced Transfer
@@ -1986,7 +2184,7 @@ function App() {
               <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
               <button onClick={handleGrantRoleInToken} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Grant Role
+                Grant Role
               </button>
             </div>
           )}
@@ -2015,7 +2213,7 @@ function App() {
             <div>
               <input type="text" value={onchainIDValue} id="onchainIDValue" onChange={handleInputChange} placeholder="Enter new Onchain ID" />
               <button onClick={handleSetOnchainID} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Set Onchain ID
+                Set Onchain ID
               </button>
             </div>
           )}
@@ -2078,7 +2276,7 @@ function App() {
       <h3>Identity Registry Smart Contract Read Functions</h3>
       <div className="flex-container">
 
-      <div>
+        <div>
           <button onClick={handleHasRoleInIdentityRegistryClick} className="card">
             Has Role in Identity Registry
           </button>
@@ -2087,7 +2285,7 @@ function App() {
               <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
               <button onClick={handleHasRoleInIdentityRegistry} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Has Role in Identity Registry
+                Has Role in Identity Registry
               </button>
             </div>
           )}
@@ -2101,7 +2299,7 @@ function App() {
             <div>
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
               <button onClick={handleIdentityOfAccount} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Identity of Account
+                Identity of Account
               </button>
             </div>
           )}
@@ -2115,7 +2313,7 @@ function App() {
             <div>
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
               <button onClick={handleInvestorCountry} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Investor Country
+                Investor Country
               </button>
             </div>
           )}
@@ -2129,17 +2327,17 @@ function App() {
             <div>
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
               <button onClick={handleAccountIsVerified} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Is Verified
+                Is Verified
               </button>
             </div>
           )}
         </div>
       </div>
-      
+
       <h3>Identity Registry Smart Contract Write Functions</h3>
       <div className="flex-container">
 
-      <div>
+        <div>
           <button onClick={handleBatchRegisterIdentityClick} className="card">
             Batch Register Identity
           </button>
@@ -2163,7 +2361,7 @@ function App() {
             <div>
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
               <button onClick={handleDeleteIdentity} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Delete Identity
+                Delete Identity
               </button>
             </div>
           )}
@@ -2179,7 +2377,117 @@ function App() {
               <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
               <input type="text" value={country} id="country" onChange={handleInputChange} placeholder="Enter country code" />
               <button onClick={handleRegisterIdentity} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Register Identity
+                Register Identity
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleGrantRoleInIdentityRegistryClick} className="card">
+            Grant Role
+          </button>
+          {showGrantRoleInIdentityRegistryInput && (
+            <div>
+              <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleGrantRoleInIdentityRegistry} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Grant Role
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleUpdateCountryClick} className="card">
+            Update Country
+          </button>
+          {showUpdateCountryInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <input type="text" value={country} id="country" onChange={handleInputChange} placeholder="Enter country" />
+              <button onClick={handleUpdateCountry} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Update Country
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleUpdateIdentityClick} className="card">
+            Update Identity
+          </button>
+          {showUpdateIdentityInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
+              <button onClick={handleUpdateIdentity} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Update Identity
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleRenounceRoleInIdentityRegistryClick} className="card">
+            Renounce Role
+          </button>
+          {showRenounceRoleInIdentityRegistryInput && (
+            <div>
+              <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleRenounceRoleInIdentityRegistry} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Renounce Role
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleRevokeRoleInIdentityRegistryClick} className="card">
+            Revoke Role
+          </button>
+          {showRevokeRoleInIdentityRegistryInput && (
+            <div>
+              <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
+              <button onClick={handleRevokeRoleInIdentityRegistry} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Revoke Role
+              </button>
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      <h3>Identity Registration Functions</h3>
+      <div className="flex-container">
+
+        <div>
+          <button onClick={handleDeployIdentitySmartContractClick} className="card">
+            Deploy Identity Smart Contract
+          </button>
+          {showDeployIdentitySmartContractInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="User wallet address" />
+              <button onClick={handleDeployIdentitySmartContract} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Deploy Identity Smart Contract
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleAddIdentityClaimClick} className="card">
+            Add Identity Claim
+          </button>
+          {showAddIdentityClaimInput && (
+            <div>
+              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
+              <input type="text" value={topic} id="topic" onChange={handleInputChange} placeholder="Enter topic" />
+              <input type="text" value={data} id="data" onChange={handleInputChange} placeholder="Enter data" />
+              <button onClick={handleAddIdentityClaim} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Add Identity Claim
               </button>
             </div>
           )}

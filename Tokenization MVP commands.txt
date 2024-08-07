@@ -120,6 +120,25 @@ IV. Create interactions with the deployed smart contract using web3auth interfac
 -unfreeze partial tokens DONE
 -unpause DONE
 
+Add functionalities to interact with the Identity Registry.
+
+-hasRole(address UserAddress) DONE
+-identity(address UserAddress) DONE
+-investorCountry(address UserAddress) DONE
+-isVerified(address UserAddress) DONE
+
+-BatchRegisterIdentity DONE (to be tested)
+-DeleteIdentity DONE
+-GrantRole DONE
+-RegisterIdentity DONE
+-UpdateCountry DONE
+-UpdateIdentity DONE
+-RenounceRole DONE
+-RevokeRole DONE
+
+DEFAULT_ADMIN_ROLE
+0x0000000000000000000000000000000000000000000000000000000000000000
+
 AGENT_ROLE
 0xcab5a0bfe0b79d2c4b1c2e02599fa044d115b7511f9659307cb4276950967709
 
@@ -147,6 +166,9 @@ Free Wallet: 0xc6442dbED945a1cf0B747994510a3bCCB8ECb693
 Second recovery wallet: 0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8
 Charlie identity: 0xd30e99C61B55C360ece31e952B26793a723c0173
 
+NEW ACCOUNT TO ADD: 0x9735eB61d172eC27eBf13b653fd239c7B1b80642
+IDENTITY OF NEW ACCOUNT: 0x62372F3B574A1731F75eC178c29c3DE8cC2Dd1E1
+
 DEPLOYER
 0xb44e0C06718534F27847e607B6AE9368798fB974,0xb44e0C06718534F27847e607B6AE9368798fB974,0xb44e0C06718534F27847e607B6AE9368798fB974
 
@@ -162,35 +184,30 @@ true,true,true
 false,false,false
 
 
+
+
+Add all functions to be able to register a new account in a scalable way.
+
+1. deployIdentityProxy (identityImplementationAuthority.address, danielWallet.address) - sent by deployer - tokenAdmin. New smart contract deployment. DONE
+
+2. identityRegistry.registerIdentity(danielWallet.address, danielIdentity.address, 300) DONE
+
+
 CONTINUE HERE: 
+3. claimForUser: Continue developing in viemRPC. For now I will send it as the user account (daniel) and I will sign the claim in the back using the claimIssuerSigningKey directly imported from .env that Im still to import. THE ONLY ERROR IS IN SENDING THE TRANSACTION. I WILL COMPARE THE RESULTS OF THE WEB CONSOLE TO THE RESULTS OF THE COMMAND LINE EXECUTION PRINTING AND FIX IT.
 
-Add functionalities to interact with the Identity Registry.
 
-.hasRole(address UserAddress) DONE
-.identity(address UserAddress) DONE
-.investorCountry(address UserAddress) DONE
-.isVerified(address UserAddress) DONE
-
-BatchRegisterIdentity DONE (to be tested)
-DeleteIdentity DONE
-GrantRole THIS IS THE NEXT ONE BASED ON TOKEN GRANT ROLE
-RegisterIdentity DONE
-UpdateCountry
-UpdateIdentity
-RenounceRole
-RevokeRole
+4. Use getAddresses() account[0] in viem script instead of the hardcoded address
 
 
 
-3. Create user buttons to interact with tokens
 
-4. make it more visually appealing
+3. Create user buttons to interact with tokens DONE
+
+4. Make it more visually appealing
 
 
 V. Launch online using vercel/simmilar
-
-
-
 
 
 

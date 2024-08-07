@@ -10,7 +10,8 @@ module.exports = function override(config) {
     https: false,
     os: false,
     url: false,
-    zlib: false
+    zlib: false,
+    path: require.resolve("path-browserify"), // Add this line
   });
   config.resolve.fallback = fallback;
   config.plugins = (config.plugins || []).concat([
