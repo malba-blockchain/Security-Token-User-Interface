@@ -175,4 +175,4 @@ const address = await this.getAccounts();
 
 0x62372F3B574A1731F75eC178c29c3DE8cC2Dd1E1
 0
-Some claim public data.
+Some claim public data

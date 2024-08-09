@@ -166,8 +166,8 @@ Free Wallet: 0xc6442dbED945a1cf0B747994510a3bCCB8ECb693
 Second recovery wallet: 0x350441F8a82680a785FFA9d3EfEa60BB4cA417f8
 Charlie identity: 0xd30e99C61B55C360ece31e952B26793a723c0173
 
-NEW ACCOUNT TO ADD: 0x9735eB61d172eC27eBf13b653fd239c7B1b80642
-IDENTITY OF NEW ACCOUNT: 0x62372F3B574A1731F75eC178c29c3DE8cC2Dd1E1
+NEW WALLET TO ADD: 0x9735eB61d172eC27eBf13b653fd239c7B1b80642
+IDENTITY OF NEW WALLET: 0x62372F3B574A1731F75eC178c29c3DE8cC2Dd1E1
 
 DEPLOYER
 0xb44e0C06718534F27847e607B6AE9368798fB974,0xb44e0C06718534F27847e607B6AE9368798fB974,0xb44e0C06718534F27847e607B6AE9368798fB974
@@ -192,10 +192,30 @@ Add all functions to be able to register a new account in a scalable way.
 
 2. identityRegistry.registerIdentity(danielWallet.address, danielIdentity.address, 300) DONE
 
+3. addclaimForUser: Add a claim associated to a specific identity. userIdentity.addClaim() DONE
 
-CONTINUE HERE: 
-3. claimForUser: Continue developing in viemRPC. For now I will send it as the user account (daniel) and I will sign the claim in the back using the claimIssuerSigningKey directly imported from .env that Im still to import. THE ONLY ERROR IS IN SENDING THE TRANSACTION. I WILL COMPARE THE RESULTS OF THE WEB CONSOLE TO THE RESULTS OF THE COMMAND LINE EXECUTION PRINTING AND FIX IT.
+4. removeClaim: Remove claim associated to a specific identity.
+userIdentity.removeClaim() DONE
 
+------
+Read
+getClaim FINISH THIS ONE FIND OUT HOW TO READ THE SMART CONTRACT
+getClaimsByTopic
+isClaimRevoked
+isClaimValid
+revokedClaims
+
+
+
+
+newWallet
+newWalletIdentity_address
+
+0x62372F3B574A1731F75eC178c29c3DE8cC2Dd1E1
+0
+Extra claim public data
+
+0x7d5a53078c31337f7efbc2df36e820b158577299b77fe95460ec71df51bd2fa2
 
 4. Use getAddresses() account[0] in viem script instead of the hardcoded address
 

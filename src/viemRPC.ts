@@ -151,6 +151,10 @@ export default class EthereumRpc {
     }
   }
 
+  async getTokenAddress(): Promise<string> {
+      return tokenSmartContractAddress;
+  }
+
   async getAgentRole(): Promise<string> {
     try {
       const publicClient = createPublicClient({
@@ -1663,6 +1667,7 @@ export default class EthereumRpc {
     }
   }
 
+
   async addIdentityClaimSmartContract(identityAddress: any, topic: any, data: any): Promise<any> {
 
     try {
@@ -1675,13 +1680,12 @@ export default class EthereumRpc {
         chain: this.getViewChain(),
         transport: custom(this.provider)
       });
-      console.log("Enter1");
-      data = data || "Some claim public data.";
 
+      data = data || "Some claim public data";
       topic = topic || 0;
 
       const claimTopics = [web3.utils.keccak256("CLAIM_TOPIC")];
-      console.log("Enter2");
+
       // Define the claim data for user
       const claimForUser = {
         data: web3.utils.utf8ToHex(data), // Public claim data for user
@@ -1691,57 +1695,34 @@ export default class EthereumRpc {
         identity: identityAddress, // Address of Users's Identity contract
         signature: "", // Placeholder for the claim signature
       };
-      console.log("Enter3");
-
-      console.log("aaaaaaaaaa");
-      console.log(privKey_claimIssuerSigningKey);
-      console.log("Enter4");
-      //const claimIssuerSigningKey = privateKeyToAccount(privKey_claimIssuerSigningKey);
-
-      // Assuming claimIssuerSigningKey is an instance of web3.eth.accounts.wallet
-      //const claimIssuerSigningKey = web3.eth.accounts.wallet.add(privKey_claimIssuerSigningKey); // Replace privateKey with the actual private key
 
       // Encode the claim data
       const encodedData = web3.eth.abi.encodeParameters(
         ["address", "uint256", "bytes"], // Types of the claim data
-        [identityAddress, topic, web3.utils.utf8ToHex(data)] // Claim data for the user
+        [claimForUser.identity, claimForUser.topic, claimForUser.data] // Claim data for the user
       );
-      console.log("Enter5");
-      // Hash the encoded data using keccak256
-      const hashedData = web3.utils.soliditySha3(encodedData);
-      console.log("Enter6");
-      // Check if hashedData is correctly generated
-      if (hashedData) {
-        console.log("Enter6.1");
-        console.log(privKey_claimIssuerSigningKey);
-        // Sign the hashed data using the private key
-        const signatureObject = web3.eth.accounts.sign(hashedData, privKey_claimIssuerSigningKey);
-        console.log("Enter6.2");
-        // Assign the signature to claimForCharlie
-        claimForUser.signature = signatureObject.signature;
-        console.log("Enter6.3");
-      } else {
-        console.error('Error generating hashedData');
-      }
-      console.log("Enter6.4");
-      const accountAddress = await this.getAccounts();      
-      console.log("Enter7");
 
-      console.log("accountAddress[0]");
-      console.log(accountAddress[0]);
-      console.log("identityAddress");
-      console.log(identityAddress);
-      console.log("claimForUser.topic");
-      console.log(claimForUser.topic);
-      console.log("claimForUser.scheme");
-      console.log(claimForUser.scheme);
-      console.log("claimForUser.issuer");
-      console.log(claimForUser.issuer);
-      console.log("claimForUser.signature");
-      console.log(claimForUser.signature);
-      console.log("claimForUser.data");
-      console.log(claimForUser.data);
-      // Submit transaction to the blockchain
+      // Hash the encoded data
+      const realHashedData = web3.utils.keccak256(encodedData);
+
+      //Turn into an array the encoded data
+      const arrayifyData = web3.utils.hexToBytes(realHashedData);
+
+      // Check if arrayifyData is correctly generated
+      if (arrayifyData) {
+
+        // Sign the hashed data using the private key
+        const claimIssuerSigningKey = web3.eth.accounts.privateKeyToAccount(privKey_claimIssuerSigningKey);
+        const signedData = claimIssuerSigningKey.sign(web3.utils.bytesToHex(arrayifyData));
+        // Assign the signature to claimForUser
+        claimForUser.signature = signedData.signature;
+      } else {
+        console.error('Error generating signedData');
+      }
+
+      const accountAddress = await this.getAccounts();      
+
+      // Send transaction to the blockchain
       const hash = await walletClient.writeContract(
         {
           account: accountAddress[0],
@@ -1749,26 +1730,87 @@ export default class EthereumRpc {
           abi: ONCHAIN_IDENTITY_ABI ,
           functionName: 'addClaim',
           args: [
-            claimForUser.topic, // Claim topic
+            claimForUser.topic,  // Claim topic
             claimForUser.scheme, // Claim scheme
             claimForUser.issuer, // Address of the ClaimIssuer contract
             claimForUser.signature, // Signed claim data
-            claimForUser.data,
-            "" // Additional data (optional)
+            claimForUser.data, //Data of the claim
+            "", // Additional data (optional)
           ]
         }
       )
-      console.log("Enter8");
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
-      console.log("Enter9");
+
       return this.toObject(receipt);
     } catch (error) {
       return error;
     }
   }
 
+  async removeIdentityClaimSmartContract(identityAddress:any, claimId: any): Promise<any> {
 
+    try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      })
+
+      const walletClient = createWalletClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      });
+
+      const accountAddress = await this.getAccounts();      
+
+      // Send transaction to the blockchain
+      const hash = await walletClient.writeContract(
+        {
+          account: accountAddress[0],
+          address: identityAddress,
+          abi: ONCHAIN_IDENTITY_ABI ,
+          functionName: 'removeClaim',
+          args: [
+            claimId //Claim Id
+          ]
+        }
+      )
+
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+      return this.toObject(receipt);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async getClaimDetailsClaimSmartContract(identityAddress:any, claimId: any): Promise<any> {
+
+    try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      })
+
+      const walletClient = createWalletClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      });
+
+      const claimDetails: string = await publicClient.readContract({
+        address: tokenSmartContractAddress,
+        abi: ONCHAIN_IDENTITY_ABI,
+        functionName: 'getClaim',
+        args: [
+          claimId //Claim Id
+        ]
+      }) as unknown as string;
+
+      return this.toObject(claimDetails);
+    } catch (error) {
+      return error;
+    }
+  }
   async smartContractPause(): Promise<any> {
     try {
       const publicClient = createPublicClient({

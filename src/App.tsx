@@ -78,6 +78,10 @@ function App() {
 
   const [showAddIdentityClaimInput, setShowAddIdentityClaimInput] = useState<boolean>(false);
 
+  const [showRemoveIdentityClaimInput, setShowRemoveIdentityClaimInput] = useState<boolean>(false);
+
+  const [showGetClaimDetailsInput, setShowGetClaimDetailsInput] = useState<boolean>(false);
+
   const [showUpdateCountryInput, setUpdateCountryInput] = useState<boolean>(false);
 
   const [showUpdateIdentityInput, setUpdateIdentityInput] = useState<boolean>(false);
@@ -98,6 +102,7 @@ function App() {
   const [identityAddress, setIdentityAddress] = useState<string>("");
   const [topic, setTopic] = useState<string>("");
   const [data, setData] = useState<string>("");
+  const [claimId, setClaimId] = useState<string>("");
   const [country, setCountry] = useState<string>("");
   const [ownerAddress, setOwnerAddress] = useState<string>("");
   const [spenderAddress, setSpenderAddress] = useState<string>("");
@@ -237,6 +242,16 @@ function App() {
     const rpc = new RPC(provider);
     const balance = await rpc.getBalance();
     uiConsole(balance);
+  };
+
+  const getTokenAddress = async () => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const tokenAddress = await rpc.getTokenAddress();
+    uiConsole(tokenAddress);
   };
 
   const getAgentRole = async () => {
@@ -712,15 +727,37 @@ function App() {
     uiConsole(deployidentitySmartContract);
   };
 
-  const addIdentityClaimSmartContract = async (identityAddress: any, topic: any, data:any) => {
+  const addIdentityClaim = async (identityAddress: any, topic: any, data:any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
       return;
     }
     const rpc = new RPC(provider);
     uiConsole("Processing add identity claim...");
-    const addIdentityClaimSmartContract = await rpc.addIdentityClaimSmartContract(identityAddress, topic, data);
-    uiConsole(addIdentityClaimSmartContract);
+    const addIdentityClaim = await rpc.addIdentityClaimSmartContract(identityAddress, topic, data);
+    uiConsole(addIdentityClaim);
+  };
+
+  const removeIdentityClaim = async (identityAddress: any, claimId: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing remove identity claim...");
+    const removeIdentityClaim = await rpc.removeIdentityClaimSmartContract(identityAddress, claimId);
+    uiConsole(removeIdentityClaim);
+  };
+
+  const getClaimDetails = async (identityAddress: any, claimId: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing remove identity claim...");
+    const getClaimDetails = await rpc.getClaimDetailsClaimSmartContract(identityAddress, claimId);
+    uiConsole(getClaimDetails);
   };
   
   const smartContractUpdateCountry = async (walletAddress: any, country: any) => {
@@ -1006,6 +1043,9 @@ function App() {
     }
     else if (event.target.id === 'data') {
       setData(event.target.value);
+    }
+    else if (event.target.id === 'claimId') {
+      setClaimId(event.target.value);
     }
   };
 
@@ -1505,7 +1545,6 @@ function App() {
     //setWalletAddress("");
   };
 
-
   const handleAddIdentityClaimClick = () => {
     setShowAddIdentityClaimInput(!showAddIdentityClaimInput); // Toggle Token input visibility
     setIdentityAddress("");
@@ -1517,10 +1556,35 @@ function App() {
     const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
     const topic = (document.getElementById('topic') as HTMLInputElement).value;
     const data = (document.getElementById('data') as HTMLInputElement).value;
-    addIdentityClaimSmartContract(identityAddress, topic, data);
+    addIdentityClaim(identityAddress, topic, data);
     //setIdentityAddress("");
     //setTopic("");
     //setData("");
+  };
+
+  const handleRemoveIdentityClaimClick = () => {
+    setShowRemoveIdentityClaimInput(!showRemoveIdentityClaimInput); // Toggle Token input visibility
+    setClaimId("");
+  };
+
+  const handleRemoveIdentityClaim= () => {
+    const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
+    const claimId = (document.getElementById('claimId') as HTMLInputElement).value;
+    removeIdentityClaim(identityAddress, claimId);
+    //SetIdentityAddress("");
+    //setClaimId("");
+  };
+
+  const handleGetClaimDetailsClick = () => {
+    setShowGetClaimDetailsInput(!showGetClaimDetailsInput); // Toggle Token input visibility
+    setClaimId("");
+  };
+
+  const handleGetClaimDetails = () => {
+    const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
+    const claimId = (document.getElementById('claimId') as HTMLInputElement).value;
+    getClaimDetails(identityAddress, claimId);
+    //setClaimId("");
   };
 
   const handleUpdateCountryClick = () => {
@@ -1722,6 +1786,12 @@ function App() {
       <h3>Token Smart Contract Read Functions</h3>
 
       <div className="flex-container">
+
+      <div>
+          <button onClick={getTokenAddress} className="card">
+            Get Token Address
+          </button>
+        </div>
 
         <div>
           <button onClick={getAgentRole} className="card">
@@ -2460,7 +2530,27 @@ function App() {
 
       </div>
 
-      <h3>Identity Registration Functions</h3>
+      <h3>Identity & Claim Registration Read Functions</h3>
+      <div className="flex-container">
+
+        <div>
+          <button onClick={handleGetClaimDetailsClick} className="card">
+            Get Claim Details
+          </button>
+          {showGetClaimDetailsInput && (
+            <div>
+              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
+              <input type="text" value={claimId} id="claimId" onChange={handleInputChange} placeholder="Enter claim ID" />
+              <button onClick={handleGetClaimDetails} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Get Claim Details
+              </button>
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      <h3>Identity & Claim Registration Write Functions</h3>
       <div className="flex-container">
 
         <div>
@@ -2476,7 +2566,7 @@ function App() {
             </div>
           )}
         </div>
-
+ 
         <div>
           <button onClick={handleAddIdentityClaimClick} className="card">
             Add Identity Claim
@@ -2488,6 +2578,21 @@ function App() {
               <input type="text" value={data} id="data" onChange={handleInputChange} placeholder="Enter data" />
               <button onClick={handleAddIdentityClaim} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
               Add Identity Claim
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleRemoveIdentityClaimClick} className="card">
+            Remove Identity Claim
+          </button>
+          {showRemoveIdentityClaimInput && (
+            <div>
+              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
+              <input type="text" value={claimId} id="claimId" onChange={handleInputChange} placeholder="Enter claim ID" />
+              <button onClick={handleRemoveIdentityClaim} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Remove Identity Claim
               </button>
             </div>
           )}
