@@ -82,6 +82,12 @@ function App() {
 
   const [showGetClaimDetailsInput, setShowGetClaimDetailsInput] = useState<boolean>(false);
 
+  const [showGetClaimsByTopicInput, setShowGetClaimsByTopicInput] = useState<boolean>(false);
+
+  const [showIsClaimValidInput, setShowIsClaimValidInput] = useState<boolean>(false);
+
+  const [showIsClaimRevokedInput, setShowIsClaimRevokedInput] = useState<boolean>(false);
+
   const [showUpdateCountryInput, setUpdateCountryInput] = useState<boolean>(false);
 
   const [showUpdateIdentityInput, setUpdateIdentityInput] = useState<boolean>(false);
@@ -102,6 +108,7 @@ function App() {
   const [identityAddress, setIdentityAddress] = useState<string>("");
   const [topic, setTopic] = useState<string>("");
   const [data, setData] = useState<string>("");
+  const [signature, setSignature] = useState<string>("");
   const [claimId, setClaimId] = useState<string>("");
   const [country, setCountry] = useState<string>("");
   const [ownerAddress, setOwnerAddress] = useState<string>("");
@@ -755,11 +762,40 @@ function App() {
       return;
     }
     const rpc = new RPC(provider);
-    uiConsole("Processing remove identity claim...");
     const getClaimDetails = await rpc.getClaimDetailsClaimSmartContract(identityAddress, claimId);
     uiConsole(getClaimDetails);
   };
-  
+
+  const getClaimsByTopic = async (identityAddress: any, topic: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const getClaimsByTopic = await rpc.smartContractGetClaimsByTopic(identityAddress, topic);
+    uiConsole(getClaimsByTopic);
+  };
+
+  const isClaimValid = async (identityAddress: any, topic: any, signature: any, data:any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const isClaimValid = await rpc.smartContractIsClaimValid(identityAddress, topic, signature, data);
+    uiConsole(isClaimValid);
+  };
+
+  const isClaimRevoked = async (signature: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const isClaimRevoked = await rpc.smartContractIsClaimRevoked(signature);
+    uiConsole(isClaimRevoked);
+  };
+
   const smartContractUpdateCountry = async (walletAddress: any, country: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -1046,6 +1082,9 @@ function App() {
     }
     else if (event.target.id === 'claimId') {
       setClaimId(event.target.value);
+    }
+    else if (event.target.id === 'signature') {
+      setSignature(event.target.value);
     }
   };
 
@@ -1577,6 +1616,7 @@ function App() {
 
   const handleGetClaimDetailsClick = () => {
     setShowGetClaimDetailsInput(!showGetClaimDetailsInput); // Toggle Token input visibility
+    setIdentityAddress("");
     setClaimId("");
   };
 
@@ -1584,9 +1624,57 @@ function App() {
     const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
     const claimId = (document.getElementById('claimId') as HTMLInputElement).value;
     getClaimDetails(identityAddress, claimId);
+    //setIdentityAddress("");
     //setClaimId("");
   };
 
+  const handleGetClaimsByTopicClick = () => {
+    setShowGetClaimsByTopicInput(!showGetClaimsByTopicInput); // Toggle Token input visibility
+    setIdentityAddress("");
+    setTopic("");
+  };
+
+  const handleGetClaimsByTopic = () => {
+    const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
+    const topic = (document.getElementById('topic') as HTMLInputElement).value;
+    getClaimsByTopic(identityAddress, topic);
+    //setIdentityAddress("");
+    //setTopic("");
+  };
+
+  const handleIsClaimValidClick = () => {
+    setShowIsClaimValidInput(!showIsClaimValidInput); // Toggle Token input visibility
+    setIdentityAddress("");
+    setTopic("");
+    setSignature("");
+    setData("");
+  };
+
+  const handleIsClaimValid = () => {
+    const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
+    const topic = (document.getElementById('topic') as HTMLInputElement).value;
+    const signature = (document.getElementById('signature') as HTMLInputElement).value;
+    const data = (document.getElementById('data') as HTMLInputElement).value;
+    
+    isClaimValid(identityAddress, topic, signature, data);
+
+    //setIdentityAddress("");
+    //setTopic("");
+    //setSignature("");
+    //setData("");
+  };
+  
+  const handleIsClaimRevokedClick = () => {
+    setShowIsClaimRevokedInput(!showIsClaimRevokedInput); // Toggle Token input visibility
+    setSignature("");
+  };
+
+  const handleIsClaimRevoked= () => {
+    const signature = (document.getElementById('signature') as HTMLInputElement).value;
+    isClaimRevoked(signature);
+    //setSignature("");
+  };
+  
   const handleUpdateCountryClick = () => {
     setUpdateCountryInput(!showUpdateCountryInput); // Toggle Token input visibility
     setWalletAddress("");
@@ -2543,6 +2631,53 @@ function App() {
               <input type="text" value={claimId} id="claimId" onChange={handleInputChange} placeholder="Enter claim ID" />
               <button onClick={handleGetClaimDetails} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
                 Get Claim Details
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleGetClaimsByTopicClick} className="card">
+            Get Claims by Topic
+          </button>
+          {showGetClaimsByTopicInput && (
+            <div>
+              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
+              <input type="text" value={topic} id="topic" onChange={handleInputChange} placeholder="Enter topic value" />
+              <button onClick={handleGetClaimsByTopic} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Get Claims by Topic
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleIsClaimValidClick} className="card">
+            Is Claim Valid
+          </button>
+          {showIsClaimValidInput && (
+            <div>
+              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
+              <input type="text" value={topic} id="topic" onChange={handleInputChange} placeholder="Enter topic value" />
+              <input type="text" value={signature} id="signature" onChange={handleInputChange} placeholder="Enter signature value" />
+              <input type="text" value={data} id="data" onChange={handleInputChange} placeholder="Enter data value" />
+              
+              <button onClick={handleIsClaimValid} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Is Claim Valid
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleIsClaimRevokedClick} className="card">
+            Is Claim Revoked
+          </button>
+          {showIsClaimRevokedInput && (
+            <div>
+              <input type="text" value={signature} id="signature" onChange={handleInputChange} placeholder="Enter signature value" />
+              <button onClick={handleIsClaimRevoked} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Is Claim Revoked
               </button>
             </div>
           )}
