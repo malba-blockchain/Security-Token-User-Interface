@@ -80,6 +80,8 @@ function App() {
 
   const [showRemoveIdentityClaimInput, setShowRemoveIdentityClaimInput] = useState<boolean>(false);
 
+  const [showRevokeIdentityClaimInput, setShowRevokeIdentityClaimInput] = useState<boolean>(false);
+
   const [showGetClaimDetailsInput, setShowGetClaimDetailsInput] = useState<boolean>(false);
 
   const [showGetClaimsByTopicInput, setShowGetClaimsByTopicInput] = useState<boolean>(false);
@@ -87,6 +89,8 @@ function App() {
   const [showIsClaimValidInput, setShowIsClaimValidInput] = useState<boolean>(false);
 
   const [showIsClaimRevokedInput, setShowIsClaimRevokedInput] = useState<boolean>(false);
+
+  const [showRevokedClaimsInput, setShowRevokedClaimsInput] = useState<boolean>(false);
 
   const [showUpdateCountryInput, setUpdateCountryInput] = useState<boolean>(false);
 
@@ -200,7 +204,7 @@ function App() {
       return;
     }
     const idToken = await web3auth.authenticateUser();
-    uiConsole(idToken);
+    uiConsole("ID Token", idToken);
   };
 
   const getUserInfo = async () => {
@@ -209,7 +213,7 @@ function App() {
       return;
     }
     const user = await web3auth.getUserInfo();
-    uiConsole(user);
+    uiConsole("User Info", user);
   };
 
   const logout = async () => {
@@ -229,8 +233,9 @@ function App() {
     }
     const rpc = new RPC(provider);
     const chainId = await rpc.getChainId();
-    uiConsole(chainId);
+    uiConsole("Chain Id of current blockchain is", chainId);
   };
+
   const getAccounts = async () => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -238,7 +243,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const address = await rpc.getAccounts();
-    uiConsole(address);
+    uiConsole("Account address is", address);
   };
 
   const getMaticBalance = async () => {
@@ -248,7 +253,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const balance = await rpc.getBalance();
-    uiConsole(balance);
+    uiConsole("Matic balance of current account is", balance);
   };
 
   const getTokenAddress = async () => {
@@ -298,7 +303,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const balance = await rpc.balanceOf(address);
-    uiConsole(balance);
+    uiConsole("Balance of", address,"is", balance);
   };
 
   const smartContractBalanceOf = async (walletAddress: any) => {
@@ -745,6 +750,17 @@ function App() {
     uiConsole(addIdentityClaim);
   };
 
+  const revokeIdentityClaim = async (identityAddress: any, claimId: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing revoke identity claim...");
+    const revokeIdentityClaim = await rpc.revokeIdentityClaimSmartContract(identityAddress, claimId);
+    uiConsole(revokeIdentityClaim);
+  };
+
   const removeIdentityClaim = async (identityAddress: any, claimId: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -794,6 +810,16 @@ function App() {
     const rpc = new RPC(provider);
     const isClaimRevoked = await rpc.smartContractIsClaimRevoked(signature);
     uiConsole(isClaimRevoked);
+  };
+
+  const revokedClaims = async (signature: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const revokedClaims = await rpc.smartContractRevokedClaims(signature);
+    uiConsole(revokedClaims);
   };
 
   const smartContractUpdateCountry = async (walletAddress: any, country: any) => {
@@ -995,7 +1021,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const signedMessage = await rpc.signMessage();
-    uiConsole(signedMessage);
+    uiConsole("Default signed message", signedMessage);
   };
 
   const getPrivateKey = async () => {
@@ -1601,16 +1627,31 @@ function App() {
     //setData("");
   };
 
+  const handleRevokeIdentityClaimClick = () => {
+    setShowRevokeIdentityClaimInput(!showRevokeIdentityClaimInput); // Toggle Token input visibility
+    setClaimId("");
+    setIdentityAddress("");
+  };
+
+  const handleRevokeIdentityClaim= () => {
+    const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
+    const claimId = (document.getElementById('claimId') as HTMLInputElement).value;
+    revokeIdentityClaim(identityAddress, claimId);
+    //setIdentityAddress("");
+    //setClaimId("");
+  };
+
   const handleRemoveIdentityClaimClick = () => {
     setShowRemoveIdentityClaimInput(!showRemoveIdentityClaimInput); // Toggle Token input visibility
     setClaimId("");
+    setIdentityAddress("");
   };
 
   const handleRemoveIdentityClaim= () => {
     const identityAddress = (document.getElementById('identityAddress') as HTMLInputElement).value;
     const claimId = (document.getElementById('claimId') as HTMLInputElement).value;
     removeIdentityClaim(identityAddress, claimId);
-    //SetIdentityAddress("");
+    //setIdentityAddress("");
     //setClaimId("");
   };
 
@@ -1672,6 +1713,17 @@ function App() {
   const handleIsClaimRevoked= () => {
     const signature = (document.getElementById('signature') as HTMLInputElement).value;
     isClaimRevoked(signature);
+    //setSignature("");
+  };
+  
+  const handleRevokedClaimsClick = () => {
+    setShowRevokedClaimsInput(!showRevokedClaimsInput); // Toggle Token input visibility
+    setSignature("");
+  };
+
+  const handleRevokedClaims= () => {
+    const signature = (document.getElementById('signature') as HTMLInputElement).value;
+    revokedClaims(signature);
     //setSignature("");
   };
   
@@ -2683,6 +2735,20 @@ function App() {
           )}
         </div>
 
+        <div>
+          <button onClick={handleRevokedClaimsClick} className="card">
+            Revoked Claims
+          </button>
+          {showRevokedClaimsInput && (
+            <div>
+              <input type="text" value={signature} id="signature" onChange={handleInputChange} placeholder="Enter signature value" />
+              <button onClick={handleRevokedClaims} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Revoked Claims
+              </button>
+            </div>
+          )}
+        </div>
+
       </div>
 
       <h3>Identity & Claim Registration Write Functions</h3>
@@ -2713,6 +2779,21 @@ function App() {
               <input type="text" value={data} id="data" onChange={handleInputChange} placeholder="Enter data" />
               <button onClick={handleAddIdentityClaim} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
               Add Identity Claim
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleRevokeIdentityClaimClick} className="card">
+            Revoke Identity Claim
+          </button>
+          {showRevokeIdentityClaimInput && (
+            <div>
+              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
+              <input type="text" value={claimId} id="claimId" onChange={handleInputChange} placeholder="Enter claim ID" />
+              <button onClick={handleRevokeIdentityClaim} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Revoke Identity Claim
               </button>
             </div>
           )}

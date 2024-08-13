@@ -67,8 +67,6 @@ Note: To verify a library smart contract, first you flatten it and then use ethe
 
 Mission: All smart contracts deployed and verified and web3auth wallets interacting with them.
 
--------------------ToDo-------------------
-
 
 IV. Create interactions with the deployed smart contract using web3auth interface.
 
@@ -171,7 +169,6 @@ IDENTITY OF NEW WALLET: 0x62372F3B574A1731F75eC178c29c3DE8cC2Dd1E1
 Claim ID: 0x7d5a53078c31337f7efbc2df36e820b158577299b77fe95460ec71df51bd2fa2
 Claim Topic: 21058371927867831348805940872063328041915844268482959292318913409062147083253
  
- 
 
 Signature: 0x037546f4a21e78a36abe9d72891291274df60577e860b8c061e1d5bf622116497ae7bc7f1f1bf9d161aef15a46b9603a485c3516697e54f8535231f1f540e8d61c
 
@@ -206,35 +203,23 @@ Add all functions to be able to register a new account in a scalable way.
 
 4. removeClaim: Remove claim associated to a specific identity.
 userIdentity.removeClaim() DONE
+Remove claim require that the sender has a management key. Can be removed by the CLAIM ISSUER or the CLAIM HOLDER himself. IT actually eliminates the claim from the smart contract.
 
-------
-Read
 getClaim DONE
 getClaimsByTopic DONE
 isClaimValid DONE
 isClaimRevoked DONE
-WHATS THE DIFFERENCE BETWEEN REVOKE AND REMOVE CLAIM?????????
-revokedClaims (it receives parameter Claim ID)
-revokeClaim 
+revokeClaim: Just changes the status of the claim in the revokedClaims array. Can only be executed by the manager. The manager is the deployer. DONE
+
+revokedClaims (it receives parameter Claim ID)  DONE
+4. Use getAddresses() account[0] in viem script instead of the hardcoded address DONE
 
 
-newWallet
-newWalletIdentity_address
+-------------------ToDo-------------------
 
-0x62372F3B574A1731F75eC178c29c3DE8cC2Dd1E1
-0
-Extra claim public data
+5. Make it more visually appealing.
 
-0x7d5a53078c31337f7efbc2df36e820b158577299b77fe95460ec71df51bd2fa2
-
-4. Use getAddresses() account[0] in viem script instead of the hardcoded address
-
-
-
-
-3. Create user buttons to interact with tokens DONE
-
-4. Make it more visually appealing
+Continue modifying the output of the contract calls. sendTransaction()
 
 
 V. Launch online using vercel/simmilar
