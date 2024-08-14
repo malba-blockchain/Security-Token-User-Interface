@@ -23,6 +23,8 @@ function App() {
   const [showGetFrozenTokensInput, setShowGetFrozenTokensInput] = useState<boolean>(false);
   const [showGetRoleAdminInput, setShowRoleAdminInput] = useState<boolean>(false);
 
+  const [showSendTransactionInput, setShowSendTransactionInput] = useState<boolean>(false);
+  
   const [showHasRoleInTokenInput, setShowHasRoleInTokenInput] = useState<boolean>(false);
   const [showHasRoleInIdentityRegistryInput, setShowHasRoleInIdentityRegistryInput] = useState<boolean>(false);
 
@@ -233,7 +235,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const chainId = await rpc.getChainId();
-    uiConsole("Chain Id of current blockchain is", chainId);
+    uiConsole("Chain ID of current blockchain", chainId);
   };
 
   const getAccounts = async () => {
@@ -243,7 +245,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const address = await rpc.getAccounts();
-    uiConsole("Account address is", address);
+    uiConsole("Account address", address);
   };
 
   const getMaticBalance = async () => {
@@ -253,7 +255,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const balance = await rpc.getBalance();
-    uiConsole("Matic balance of current account is", balance);
+    uiConsole("Matic balance of current account", balance);
   };
 
   const getTokenAddress = async () => {
@@ -263,7 +265,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const tokenAddress = await rpc.getTokenAddress();
-    uiConsole(tokenAddress);
+    uiConsole("Token address", tokenAddress);
   };
 
   const getAgentRole = async () => {
@@ -273,7 +275,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const agentRole = await rpc.getAgentRole();
-    uiConsole(agentRole);
+    uiConsole("Agent role", agentRole);
   };
 
   const getDeFaultAdminRole = async () => {
@@ -283,7 +285,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const defaultAdminRole = await rpc.getDeFaultAdminRole();
-    uiConsole(defaultAdminRole);
+    uiConsole("Default admin role", defaultAdminRole);
   };
 
   const getOwnerRole = async () => {
@@ -293,7 +295,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const ownerRole = await rpc.getOwnerRole();
-    uiConsole(ownerRole);
+    uiConsole("Owner role", ownerRole);
   };
 
   const balanceOf = async (address: string) => {
@@ -313,7 +315,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const balance = await rpc.smartContractBalanceOf(walletAddress);
-    uiConsole(balance);
+    uiConsole("Token balance of wallet:", walletAddress, "is", balance);
   };
 
   const smartContractAllowance = async (ownerAddress: any, spenderAddress: any) => {
@@ -323,7 +325,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const allowance = await rpc.smartContractAllowance(ownerAddress, spenderAddress);
-    uiConsole(allowance);
+    uiConsole("Allowance of owner wallet", ownerAddress, "with spender wallet", spenderAddress, "is", allowance);
   };
 
   const smartContractGetFrozenTokens = async (walletAddress: any) => {
@@ -333,7 +335,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const frozenTokens = await rpc.smartContractGetFrozenTokens(walletAddress);
-    uiConsole(frozenTokens);
+    uiConsole("Frozen tokens balance of wallet", walletAddress, "is", frozenTokens);
   };
 
   const smartContractGetRoleAdmin = async (role: any) => {
@@ -343,7 +345,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const adminRole = await rpc.smartContractGetRoleAdmin(role);
-    uiConsole(adminRole);
+    uiConsole("Admin role:", adminRole);
   };
 
   const smartContractHasRoleInToken = async (role: any, walletAddress: any) => {
@@ -353,7 +355,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const hasRole = await rpc.smartContractHasRoleInToken(role, walletAddress);
-    uiConsole(hasRole);
+    uiConsole("The property of role", role, "in wallet", walletAddress, "over the token contract is", hasRole);
   };
 
   const smartContractHasRoleInIdentityRegistry = async (role: any, walletAddress: any) => {
@@ -373,7 +375,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const compliance = await rpc.getCompliance();
-    uiConsole(compliance);
+    uiConsole("Compliance address", compliance);
   };
 
   const getDecimals = async () => {
@@ -383,7 +385,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const decimals = await rpc.getDecimals();
-    uiConsole(decimals);
+    uiConsole("Token decimals", decimals);
   };
 
   const smartContractIsFrozen = async (walletAddress: any) => {
@@ -393,7 +395,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const isFrozen = await rpc.smartContractIsFrozen(walletAddress);
-    uiConsole(isFrozen);
+    uiConsole("Frozen status of wallet", walletAddress, "is", isFrozen);
   };
 
   const smartContractIdentityOfAccount = async (walletAddress: any) => {
@@ -929,7 +931,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const identityRegistry = await rpc.getIdentityRegistry();
-    uiConsole(identityRegistry);
+    uiConsole("Identity registry address", identityRegistry);
   };
 
   const getName = async () => {
@@ -939,7 +941,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const name = await rpc.getName();
-    uiConsole(name);
+    uiConsole("Name of token contract", name);
   };
 
   const getOnchainID = async () => {
@@ -949,7 +951,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const onchainID = await rpc.getOnchainID();
-    uiConsole(onchainID);
+    uiConsole("On-chain ID of token", onchainID);
   };
 
   const getIsPaused = async () => {
@@ -959,7 +961,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const isPaused = await rpc.getIsPaused();
-    uiConsole(isPaused);
+    uiConsole("Paused status of smart contract", isPaused);
   };
 
   const getSymbol = async () => {
@@ -969,7 +971,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const symbol = await rpc.getSymbol();
-    uiConsole(symbol);
+    uiConsole("Smart contract symbol", symbol);
   };
 
   const pauseSmartContract = async () => {
@@ -1001,16 +1003,17 @@ function App() {
     }
     const rpc = new RPC(provider);
     const totalSupply = await rpc.getTotalSupply();
-    uiConsole(totalSupply);
+    uiConsole("Total supply of tokens", totalSupply);
   };
 
-  const sendTransaction = async () => {
+  const sendTransaction = async (walletAddresss:any, amount:any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
       return;
     }
     const rpc = new RPC(provider);
-    const receipt = await rpc.sendTransaction();
+    uiConsole("Processing send transaction...");
+    const receipt = await rpc.sendTransaction(walletAddresss, amount);
     uiConsole(receipt);
   };
 
@@ -1031,7 +1034,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const privateKey = await rpc.getPrivateKey();
-    uiConsole(privateKey);
+    uiConsole("Private key", privateKey);
   };
 
   function uiConsole(...args: any[]): void {
@@ -1129,10 +1132,24 @@ function App() {
     setWalletAddress("");
   };
 
+  const handleSendTransactionClick = () => {
+    setShowSendTransactionInput(!showSendTransactionInput); // Toggle Token input visibility
+    setWalletAddress("");
+    setAmount("");
+  };
+  
+  const handleSendTransaction = () => {
+    const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
+    const amount = (document.getElementById('amount') as HTMLInputElement).value;
+    sendTransaction(walletAddress, amount);
+    //setWalletAddress("");
+    //setAmount("");
+  };
+  
   const handleCheckSmartContractBalance = () => {
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
     smartContractBalanceOf(walletAddress);
-    setWalletAddress("");
+    //setWalletAddress("");
   };
 
   const handleAllowanceClick = () => {
@@ -1255,7 +1272,7 @@ function App() {
     const amount = (document.getElementById('amount') as HTMLInputElement).value;
     smartContractApproveBalance(spenderAddress, amount);
     ////setSpenderAddress("");
-    setAmount("");
+    //setAmount("");
   };
 
   const handleBatchFreezePartialTokensClick = () => {
@@ -1906,10 +1923,20 @@ function App() {
             Sign Message
           </button>
         </div>
+
         <div>
-          <button onClick={sendTransaction} className="card">
+          <button onClick={handleSendTransactionClick} className="card">
             Send Transaction
           </button>
+          {showSendTransactionInput && (
+            <div>
+              <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter address" />
+              <input type="text" value={amount} id="amount" onChange={handleInputChange} placeholder="Enter amount" />
+              <button onClick={handleSendTransaction} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Send Transaction
+              </button>
+            </div>
+          )}
         </div>
         <div>
           <button onClick={getPrivateKey} className="card">
