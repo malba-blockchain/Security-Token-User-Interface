@@ -151,6 +151,31 @@ export default class EthereumRpc {
     }
   }
 
+  async getMyTokenBalance(): Promise<string> {
+    try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      });
+
+      const address = await this.getAccounts();
+
+      const myTokenBalance: string = await publicClient.readContract({
+        address: TOKEN_SMART_CONTRACT_ADDRESS,
+        abi: ERC3643_ABI,
+        functionName: 'balanceOf',
+        args: [address[0]]
+      }) as unknown as string;
+
+      const response = "My token balance is: " + web3.utils.fromWei(myTokenBalance, 'mwei');
+
+      return this.toObject(response); // Convert balance from wei to ether
+    } catch (error) {
+      console.error(error);
+      return error instanceof Error ? error.message : "An error occurred";
+    }
+}
+
   async getTokenAddress(): Promise<string> {
       return TOKEN_SMART_CONTRACT_ADDRESS;
   }
@@ -285,7 +310,7 @@ export default class EthereumRpc {
       const adminRole: string = await publicClient.readContract({
         address: TOKEN_SMART_CONTRACT_ADDRESS,
         abi: ERC3643_ABI,
-        functionName: 'ge',
+        functionName: 'getRoleAdmin',
         args: [role]
       }) as unknown as string;
 
@@ -410,8 +435,13 @@ export default class EthereumRpc {
         functionName: 'identity',
         args: [walletAddress]
       }) as unknown as string;
+      
+      const response = "The Onchain identity of the address: " + walletAddress 
+        + ", in the identity registry of address: " + IDENTITY_REGISTRY_SMART_CONTRACT_ADDRESS 
+        + ", is: " + identityOfAccount;
 
-      return identityOfAccount; // Convert balance from wei to ether
+      return this.toObject(response); 
+
     } catch (error) {
       console.error(error);
       return error instanceof Error ? error.message : "An error occurred";
@@ -432,7 +462,11 @@ export default class EthereumRpc {
         args: [walletAddress]
       }) as unknown as string;
 
-      return investorCountry; // Convert balance from wei to ether
+      const response = "The investor country code of wallet address: " + walletAddress
+        + ", in the identity registry of address: " + IDENTITY_REGISTRY_SMART_CONTRACT_ADDRESS 
+        + ", is code: " + investorCountry;
+
+      return this.toObject(response); 
     } catch (error) {
       console.error(error);
       return error instanceof Error ? error.message : "An error occurred";
@@ -453,7 +487,11 @@ export default class EthereumRpc {
         args: [walletAddress]
       }) as unknown as string;
 
-      return isVerified; // Convert balance from wei to ether
+      const response = "The verified status of address: "+ walletAddress
+        + ", in the identity registry of address: " + IDENTITY_REGISTRY_SMART_CONTRACT_ADDRESS 
+        + ", is: " + isVerified;
+
+      return this.toObject(response);
     } catch (error) {
       console.error(error);
       return error instanceof Error ? error.message : "An error occurred";
@@ -608,7 +646,9 @@ export default class EthereumRpc {
       // Convert the value from wei (the smallest unit of Ether) to Ether
       const valueEther = Number(valueBigInt) / 1e18;
 
-      const response = "Sent: "+ valueEther + ", from: "+ receipt["from"] + ", to: " + receipt["to"] ;
+      const response = "Sent: "+ valueEther 
+        + ", from: "+ receipt["from"] 
+        + ", to: " + receipt["to"] ;
 
       return this.toObject(response);
     } catch (error) {
@@ -645,10 +685,10 @@ export default class EthereumRpc {
 
       const dataDecimal = BigInt(receipt.logs[0].data);
 
-      const result = "Wallet owner: "+ receipt["from"] + ", approved token amount: " + dataDecimal.toString() 
+      const response = "Wallet owner: "+ receipt["from"] + ", approved token amount: " + dataDecimal.toString() 
       + ", to: " + receipt["to"] + ". Transaction hash: " + hash;
 
-      return this.toObject(result);
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -656,6 +696,10 @@ export default class EthereumRpc {
 
   async smartContractBatchFreezePartialTokens(_addressesList: any, _amounts: any): Promise<any> {
     try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      })
 
       const walletClient = createWalletClient({
         chain: this.getViewChain(),
@@ -675,8 +719,11 @@ export default class EthereumRpc {
         }
       );
 
+      await publicClient.waitForTransactionReceipt({ hash });
+
       const response = "Batch partial freeze of tokens for the addresses: " +  _addressesList 
-        + ", the amounts: " + _amounts + ". Transaction hash: " + hash;
+        + ", the amounts: " + _amounts 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(response);
     } catch (error) {
@@ -686,6 +733,10 @@ export default class EthereumRpc {
 
   async smartContractBatchMint(_addressesList: any, _amounts: any): Promise<any> {
     try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      })
 
       const walletClient = createWalletClient({
         chain: this.getViewChain(),
@@ -705,8 +756,11 @@ export default class EthereumRpc {
         }
       );
 
-      const response = "Minted batch of tokens for the addresses: " + _addressesList + ", the amounts: " 
-        + _amounts + ". Transaction hash: " + hash;
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      const response = "Minted batch of tokens for the addresses: " + _addressesList 
+        + ", the amounts: " + _amounts 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(response);
     } catch (error) {
@@ -716,6 +770,10 @@ export default class EthereumRpc {
 
   async smartContractBatchSetAddressFrozen(_addressesList: any, _booleanList: any): Promise<any> {
     try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      })
 
       const walletClient = createWalletClient({
         chain: this.getViewChain(),
@@ -735,7 +793,10 @@ export default class EthereumRpc {
         }
       );
 
-      const response = "Batch set frozen addresses: " + _addressesList + ", with the values: " + _booleanList 
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      const response = "Batch set frozen addresses: " + _addressesList 
+        + ", with the values: " + _booleanList 
         + ". Transaction hash: " + hash;
 
       return this.toObject(response);
@@ -746,6 +807,10 @@ export default class EthereumRpc {
 
   async smartContractBatchBurn(_addressesList: any, _amounts: any): Promise<any> {
     try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      })
 
       const walletClient = createWalletClient({
         chain: this.getViewChain(),
@@ -765,7 +830,11 @@ export default class EthereumRpc {
         }
       );
 
-      const response = "Burned tokens from addresses: " + _addressesList + ", the amounts: " + _amounts 
+      await publicClient.waitForTransactionReceipt({ hash });
+
+
+      const response = "Burned tokens from addresses: " + _addressesList 
+        + ", the amounts: " + _amounts 
         + ". Transaction hash: " +  hash;
 
       return this.toObject(response);
@@ -776,6 +845,10 @@ export default class EthereumRpc {
 
   async smartContractBatchForcedTransfer(_fromList: any, _addressesList: any, _amounts: any): Promise<any> {
     try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      })
 
       const walletClient = createWalletClient({
         chain: this.getViewChain(),
@@ -795,8 +868,12 @@ export default class EthereumRpc {
         }
       );
 
-      const response = "Forced batch transfer from addresses: " + _fromList + ", to addresses: " + _addressesList 
-        + ", the amounts: " + _amounts + ". Transaction hash: " + hash;
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      const response = "Forced batch transfer from addresses: " + _fromList 
+        + ", to addresses: " + _addressesList 
+        + ", the amounts: " + _amounts 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(response);
     } catch (error) {
@@ -828,9 +905,15 @@ export default class EthereumRpc {
           args: [_addressesList, _identitiesList, _countriesList]
         }
       );
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      const response = "Batch identity registration of the wallet addresses: " +  _addressesList 
+        + ", with the identities: " + _identitiesList
+        + ", and the countries: " + _countriesList
+        + ", has been sent. Transaction hash: " + hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -857,8 +940,9 @@ export default class EthereumRpc {
         }
       );
 
-      const response = "Batch transfer of tokens to the addresses: " + _addressesList + ", with the amounts: " + _amounts 
-      + ". Transaction hash: " + hash;
+      const response = "Batch transfer of tokens to the addresses: " + _addressesList 
+        + ", with the amounts: " + _amounts 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(response);
     } catch (error) {
@@ -887,8 +971,10 @@ export default class EthereumRpc {
         }
       );
 
-      const response = "Batch transfer of tokens from the address: " + accountAddress[0] +  ", to the addresses:"
-        + _addressesList + ", with the amounts: " + _amounts + ". Transaction hash: " + hash;
+      const response = "Batch transfer of tokens from the address: " + accountAddress[0] 
+        +  ", to the addresses:" + _addressesList 
+        + ", with the amounts: " + _amounts 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(response);
     } catch (error) {
@@ -918,7 +1004,8 @@ export default class EthereumRpc {
       );
 
       const response = "Batch partial unfreeze of tokens for the addresses: " +  _addressesList 
-        + ", the amounts: " + _amounts + ". Transaction hash: " + hash;
+        + ", the amounts: " + _amounts 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(response);
     } catch (error) {
@@ -949,14 +1036,15 @@ export default class EthereumRpc {
           functionName: 'burn',
           args: [walletAddress, amount]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       const dataDecimal = BigInt(receipt.logs[0].data);
 
-      const result = "Burned token amount: " + dataDecimal.toString() + ", from: " + walletAddress + 
-        ". Transaction hash: " + hash;
+      const result = "Burned token amount: " + dataDecimal.toString() 
+        + ", from: " + walletAddress 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(result);
     } catch (error) {
@@ -987,14 +1075,16 @@ export default class EthereumRpc {
           functionName: 'forcedTransfer',
           args: [ownerAddress, spenderAddress, amount]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       const dataDecimal = BigInt(receipt.logs[0].data);
 
-      const result = "Forced transfer of token amount: " + dataDecimal.toString() + " from: " 
-        + ownerAddress + ", to: " + spenderAddress + ". Transaction hash: " + hash;
+      const result = "Forced transfer of token amount: " + dataDecimal.toString() 
+        + " from: " + ownerAddress 
+        + ", to: " + spenderAddress 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(result);
     } catch (error) {
@@ -1025,14 +1115,16 @@ export default class EthereumRpc {
           functionName: 'decreaseAllowance',
           args: [spenderAddress, amount]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       const dataDecimal = BigInt(receipt.logs[0].data);
 
-      const result = "Total token allowance: " + dataDecimal.toString() + ", from owner address: " + accountAddress[0] 
-        + ", to: " + spenderAddress + ". Transaction hash: " + hash;
+      const result = "Total token allowance: " + dataDecimal.toString() 
+        + ", from owner address: " + accountAddress[0] 
+        + ", to: " + spenderAddress 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(result);
     } catch (error) {
@@ -1063,14 +1155,15 @@ export default class EthereumRpc {
           functionName: 'freezePartialTokens',
           args: [walletAddress, amount]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       const dataDecimal = BigInt(receipt.logs[0].data);
 
-      const result = "Freezed token amount: " + dataDecimal.toString() + ", to: " + walletAddress + 
-        ". Transaction hash: " + hash;
+      const result = "Freezed: " + dataDecimal.toString()
+        + " tokens, to: " + walletAddress
+        + ". Transaction hash" + hash;
 
       return this.toObject(result);
     } catch (error) {
@@ -1101,13 +1194,16 @@ export default class EthereumRpc {
           functionName: 'increaseAllowance',
           args: [spenderAddress, amount]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       const dataDecimal = BigInt(receipt.logs[0].data);
 
-      const result = "Total allowance: " + dataDecimal.toString() + ", to: " + spenderAddress;
+      const result = "Total token allowance: " + dataDecimal.toString() 
+        + ", from owner address: " + accountAddress[0] 
+        + ", to: " + spenderAddress 
+        + ". Transaction hash: " + hash;
 
       return this.toObject(result);
     } catch (error) {
@@ -1138,13 +1234,15 @@ export default class EthereumRpc {
           functionName: 'mint',
           args: [walletAddress, amount]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       const dataDecimal = BigInt(receipt.logs[0].data);
 
-      const result = "Minted: " + dataDecimal.toString() + ", to: " + walletAddress;
+      const result = "Minted token amount: " + dataDecimal.toString() 
+        + ", to: " + walletAddress
+        + ". Transaction hash: " + hash;
 
       return this.toObject(result);
     } catch (error) {
@@ -1173,13 +1271,18 @@ export default class EthereumRpc {
           address: TOKEN_SMART_CONTRACT_ADDRESS,
           abi: ERC3643_ABI,
           functionName: 'recoveryAddress',
-          args: [lostWalletAddress, newWalletAddress, investorOnchainID]
+          args: [lostWalletAddress, newWalletAddress, investorOnchainID],
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "Lost wallet address: " + lostWalletAddress 
+        + " has been updated with the new wallet address: " + newWalletAddress 
+        + ", for the investor On-chain ID: " + investorOnchainID 
+        + ". Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1214,17 +1317,67 @@ export default class EthereumRpc {
             1, // Purpose of the key
             1]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "Added recovery address: " + newWalletAddress 
+        + " for the previous wallet address: " + lostWalletAddress 
+        + ", for the investor On-chain ID: " + investorOnchainID 
+        + ". Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
   }
 
-  async smartContractRenounceRole(role: any, walletAddress: any): Promise<any> {
+  async smartContractRemoveAddressIdentityRecover(lostWalletAddress: any, investorOnchainID: any): Promise<any> {
+
+    try {
+      const publicClient = createPublicClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      })
+
+      const walletClient = createWalletClient({
+        chain: this.getViewChain(),
+        transport: custom(this.provider)
+      });
+
+      const accountAddress = await this.getAccounts();  
+
+      // Submit transaction to the blockchain
+      const hash = await walletClient.writeContract(
+        {
+          account: accountAddress[0],
+          address: investorOnchainID,
+          abi: ONCHAIN_IDENTITY_ABI,
+          functionName: 'removeKey',
+          args: [web3.utils.keccak256(
+            web3.eth.abi.encodeParameters(
+              ["address"], // Key type
+              [lostWalletAddress] //
+            )
+          ),
+            1, // Purpose of the key
+          ]
+        }
+      );
+
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      const response = "Removed recovery address: " + lostWalletAddress 
+        + ", from the investor On-chain ID: " + investorOnchainID 
+        + ". Transaction hash: "+ hash;
+
+      return this.toObject(response);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async smartContractRenounceRoleInToken(role: any, walletAddress: any): Promise<any> {
     try {
       const publicClient = createPublicClient({
         chain: this.getViewChain(),
@@ -1247,18 +1400,23 @@ export default class EthereumRpc {
           functionName: 'renounceRole',
           args: [role, walletAddress]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The address: " + walletAddress 
+        + ", renounced the role: " + role 
+        + ", in the token contract. Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
   }
 
-  async smartContractRevokeRole(role: any, walletAddress: any): Promise<any> {
+  async smartContractRevokeRoleInToken(role: any, walletAddress: any): Promise<any> {
     try {
+
       const publicClient = createPublicClient({
         chain: this.getViewChain(),
         transport: custom(this.provider)
@@ -1280,11 +1438,16 @@ export default class EthereumRpc {
           functionName: 'revokeRole',
           args: [role, walletAddress]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The address: " + accountAddress[0] 
+        + ", revoked the role: " + role 
+        + ", to the address: " + walletAddress
+        + ", in the token contract. Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1313,11 +1476,16 @@ export default class EthereumRpc {
           functionName: 'grantRole',
           args: [role, walletAddress]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+     await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+     const response = "The address: " + accountAddress[0] 
+      + ", granted the role: " + role 
+      + ", to the address: " + walletAddress
+      + ", in the token contract. Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1346,11 +1514,16 @@ export default class EthereumRpc {
           functionName: 'grantRole',
           args: [role, walletAddress]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The address: " + accountAddress[0] 
+        + ", granted the role: " + role 
+        + ", to the address: " + walletAddress
+        + ", in the identity registry. Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1379,11 +1552,15 @@ export default class EthereumRpc {
           functionName: 'renounceRole',
           args: [role, walletAddress]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The address: " + walletAddress 
+      + ", renounced the role: " + role 
+      + ", in the identity registry. Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1412,11 +1589,16 @@ export default class EthereumRpc {
           functionName: 'revokeRole',
           args: [role, walletAddress]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The address: " + accountAddress[0] 
+        + ", revoked the role: " + role 
+        + ", to the address: " + walletAddress
+        + ", in the identity registry. Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1445,11 +1627,16 @@ export default class EthereumRpc {
           functionName: 'updateCountry',
           args: [walletAddress, country]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The address: " + accountAddress[0] 
+        + ", updated the country of the address: " + walletAddress
+        + ", with the country code: " + country
+        + ", in the identity registry. Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1478,11 +1665,16 @@ export default class EthereumRpc {
           functionName: 'updateIdentity',
           args: [walletAddress, identity]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The address: " + accountAddress[0] 
+        + ", updated the identity of the address: " + walletAddress
+        + ", with the new identity address: " + identity
+        + ", in the identity registry. Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1511,11 +1703,15 @@ export default class EthereumRpc {
           functionName: 'setAddressFrozen',
           args: [walletAddress, boolValue]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The address: " + walletAddress 
+        + ", frozen status has been set to: " + boolValue 
+        + ". Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1544,11 +1740,15 @@ export default class EthereumRpc {
           functionName: 'setOnchainID',
           args: [onchainIDValue]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The token smart contract of address: " + TOKEN_SMART_CONTRACT_ADDRESS 
+        + ", Onchain Identity address has been changed to: " + onchainIDValue 
+        + ". Transaction hash: "+ hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1577,15 +1777,18 @@ export default class EthereumRpc {
           functionName: 'transfer',
           args: [walletAddress, amount]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       const dataDecimal = BigInt(receipt.logs[0].data);
 
-      const result = "Transfered: " + dataDecimal.toString() + ", to: " + walletAddress;
+      const response = "Transfered: " + dataDecimal.toString() 
+        + " tokens, from: " + accountAddress[0] 
+        + " to: " + walletAddress 
+        + ". Transaction hash: " + hash;
 
-      return this.toObject(result);
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1614,11 +1817,19 @@ export default class EthereumRpc {
           functionName: 'transferFrom',
           args: [ownerAddress, walletAddress, amount]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const dataDecimal = BigInt(receipt.logs[0].data);
+
+      const response = "Transfered: " + dataDecimal.toString() 
+        + " tokens, from: " + ownerAddress 
+        + ", to: " + walletAddress 
+        + ", by: " + accountAddress[0] 
+        + ". Transaction hash: " + hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1647,15 +1858,17 @@ export default class EthereumRpc {
           functionName: 'unfreezePartialTokens',
           args: [walletAddress, amount]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       const dataDecimal = BigInt(receipt.logs[0].data);
 
-      const result = "Unfreezed: " + dataDecimal.toString() + ", to: " + walletAddress;
+      const response = "Unfreezed: " + dataDecimal.toString() 
+        + " tokens, to: " + walletAddress
+        + ". Transaction hash: " + hash;
 
-      return this.toObject(result);
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1684,11 +1897,15 @@ export default class EthereumRpc {
           functionName: 'deleteIdentity',
           args: [walletAddress]
         }
-      )
+      );
+      
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      const response = "Deleted identity for wallet address: " + accountAddress[0]
+        + " in identity registry: " + IDENTITY_REGISTRY_SMART_CONTRACT_ADDRESS
+        + ". Transaction hash" + hash;
 
-      return this.toObject(receipt);
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1717,11 +1934,16 @@ export default class EthereumRpc {
           functionName: 'registerIdentity',
           args: [walletAddress, identityAddress, country]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "Identity registration of the wallet addresses: " +  walletAddress 
+        + ", with the identity: " + identityAddress
+        + ", and the country: " + country
+        + ", has been sent. Transaction hash: " + hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1798,11 +2020,19 @@ export default class EthereumRpc {
             "", // Additional data (optional)
           ]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      const response = "The claim for the Onchain identity address: " +  identityAddress 
+        + ", with the topic: " + topic
+        + " and data: " + data
+        + ", has been added with the claim ID: " + receipt['logs'][0]['topics'][1]
+        + ". Transaction hash: " + hash;
+
+      return this.toObject(response);;
     } catch (error) {
       return error;
     }
@@ -1835,11 +2065,16 @@ export default class EthereumRpc {
             identityAddress //Identity Address
           ]
         }
-      )
+      );
+      
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      const response = "The claim for the Onchain identity address: " +  identityAddress 
+        + ", and claim ID " + claimId
+        + " has been revoked from the claim issuer contract."
+        + " Transaction hash: " + hash;
 
-      return this.toObject(receipt);
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1871,11 +2106,15 @@ export default class EthereumRpc {
             claimId //Claim Id
           ]
         }
-      )
+      );
 
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      const response = "The claim ID: " +  claimId 
+      + " has been removed from the Onchain Identity of the address: " + identityAddress
+      + ". Transaction hash: " + hash;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1898,7 +2137,15 @@ export default class EthereumRpc {
         ]
       }) as unknown as string;
 
-      return this.toObject(claimDetails);
+      const response = "The claim ID: " + claimId 
+        + ", of the Onchain ID address: " + identityAddress 
+        + ", has the topic: " + claimDetails[0]
+        + ", scheme: " + claimDetails[1]
+        + ", claim issuer address: " + claimDetails[2]
+        + ", signature: " + claimDetails[3]
+        + " and data: " + claimDetails[4]
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1912,16 +2159,20 @@ export default class EthereumRpc {
         transport: custom(this.provider)
       })
 
-      const claimDetails: string = await publicClient.readContract({
+      const claimsByTopic: string = await publicClient.readContract({
         address: identityAddress,
         abi: ONCHAIN_IDENTITY_ABI,
         functionName: 'getClaimIdsByTopic',
         args: [
-          topic //Claim Id
+          topic //Topic ID
         ]
       }) as unknown as string;
 
-      return this.toObject(claimDetails);
+      const response = "The Onchain ID address: " + identityAddress 
+        + ", containes the topic: " + topic 
+        + ", with the following claims: " + claimsByTopic;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1947,7 +2198,13 @@ export default class EthereumRpc {
         ]
       }) as unknown as string;
 
-      return this.toObject(isClaimValid);
+      const response = "The claim for the Onchain ID address: " + identityAddress 
+        + ", topic: " + topic
+        + ", signature: " + signature 
+        + " and data: " + data
+        + ", valid status is: " + isClaimValid;
+
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -1970,30 +2227,10 @@ export default class EthereumRpc {
         ]
       }) as unknown as string;
 
-      return this.toObject(isClaimRevoked);
-    } catch (error) {
-      return error;
-    }
-  }
+      const response = "The the claim with signature: " + signature 
+        + ", revoked status is: " + isClaimRevoked;
 
-  async smartContractRevokedClaims(signature: any): Promise<any> {
-
-    try {
-      const publicClient = createPublicClient({
-        chain: this.getViewChain(),
-        transport: custom(this.provider)
-      })
-
-      const revokedClaims: string = await publicClient.readContract({
-        address: CLAIM_ISSUER_CONTRACT_ADDRESS,
-        abi: CLAIM_ISSUER_ABI,
-        functionName: 'revokedClaims',
-        args: [ 
-          signature
-        ]
-      }) as unknown as string;
-
-      return this.toObject(revokedClaims);
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -2021,10 +2258,13 @@ export default class EthereumRpc {
           abi: ERC3643_ABI,
           functionName: 'pause',
         }
-      )
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      );
 
-      return this.toObject(receipt);
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      const response = "Smart contract paused. Transaction hash: " + hash;
+      
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -2053,9 +2293,12 @@ export default class EthereumRpc {
           functionName: 'unpause',
         }
       )
-      const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-      return this.toObject(receipt);
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      const response = "Smart contract unpaused. Transaction hash: " + hash;
+      
+      return this.toObject(response);
     } catch (error) {
       return error;
     }
@@ -2081,15 +2324,20 @@ export default class EthereumRpc {
         account: address[0],
         args: [IDENTITY_IMPLEMENTATION_AUTHORITY_ADDRESS, walletAddress],
         bytecode: IDENTITY_PROXY_BYTECODE,
-      })
+      });
 
       // Wait for the transaction receipt
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
       const identityProxyAddress = receipt.contractAddress;
 
+      const response = "The identity for the wallet address: " + walletAddress
+        + ", has been deployed with the identity implementation authority address: " + IDENTITY_IMPLEMENTATION_AUTHORITY_ADDRESS
+        + ", with the smart contract identity address: " + identityProxyAddress
+        + ". Transaction hash: " + hash;
+
       // Return the deployed contract address
-      return "Deployed smart contract identity address:" + identityProxyAddress;
+      return this.toObject(response);
 
     } catch (error) {
       return error;
@@ -2163,7 +2411,7 @@ export default class EthereumRpc {
           functionName: 'store',
           args: [randomNumber]
         }
-      )
+      );
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
@@ -2181,5 +2429,4 @@ export default class EthereumRpc {
         : value // return everything else unchanged
     ));
   }
-
 }

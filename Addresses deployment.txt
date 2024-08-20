@@ -59,7 +59,7 @@ TokenOID Contract Address: 0x096C680201025483785c68A5B9cEDa1DDEa2dd4F
 New TokenOID Contract Address: 0xBbe7682Ea77b0667aD2134Cd73d86Af61b12ff32
 
 Token Deployment...
-Token Contract Address:  0x60E5799fed9ACbdaF36e752a05468f1519b03c6f
+
 
 ~~ Claims setup ~~
 
@@ -80,7 +80,6 @@ Charlie Identity Contract:  0xd30e99C61B55C360ece31e952B26793a723c0173
 
 Token Admin Identity Deployment...
 Token Admin Identity Contract: 0xE8dfE7810D8Db63C61632e7a5b0e0aaD717566F3
-
 
 
 CONTRACTS DEPLOYED

@@ -64,9 +64,9 @@ function App() {
 
   const [showRegisterIdentityInput, setShowRegisterIdentityInput] = useState<boolean>(false);
 
-  const [showRenounceRoleInput, setShowRenounceRoleInput] = useState<boolean>(false);
+  const [showRenounceRoleInTokenInput, setshowRenounceRoleInTokenInput] = useState<boolean>(false);
 
-  const [showRevokeRoleInput, setShowRevokeRoleInput] = useState<boolean>(false);
+  const [showRevokeRoleInTokenInput, setshowRevokeRoleInTokenInput] = useState<boolean>(false);
 
   const [showGrantRoleInTokenInput, setShowGrantRoleInTokenInput] = useState<boolean>(false);
 
@@ -92,8 +92,6 @@ function App() {
 
   const [showIsClaimRevokedInput, setShowIsClaimRevokedInput] = useState<boolean>(false);
 
-  const [showRevokedClaimsInput, setShowRevokedClaimsInput] = useState<boolean>(false);
-
   const [showUpdateCountryInput, setUpdateCountryInput] = useState<boolean>(false);
 
   const [showUpdateIdentityInput, setUpdateIdentityInput] = useState<boolean>(false);
@@ -108,6 +106,9 @@ function App() {
   const [showRecoveryAddressInput, setShowRecoveryAddressInput] = useState<boolean>(false);
 
   const [showAddAddressIdentityRecoverInput, setShowAddAddressIdentityRecoverInput] = useState<boolean>(false);
+
+  const [showRemoveAddressIdentityRecoverInput, setShowRemoveAddressIdentityRecoverInput] = useState<boolean>(false);
+
 
   const [address, setAddress] = useState<string>("");
   const [walletAddress, setWalletAddress] = useState<string>("");
@@ -258,6 +259,16 @@ function App() {
     uiConsole("Matic balance of current account", balance);
   };
 
+  const getMyTokenBalance = async () => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const myTokenBalance = await rpc.getMyTokenBalance();
+    uiConsole(myTokenBalance);
+  };
+
   const getTokenAddress = async () => {
     if (!provider) {
       uiConsole("provider not initialized yet");
@@ -365,7 +376,7 @@ function App() {
     }
     const rpc = new RPC(provider);
     const hasRole = await rpc.smartContractHasRoleInIdentityRegistry(role, walletAddress);
-    uiConsole(hasRole);
+    uiConsole("The property of role", role, "in wallet", walletAddress, "over the identity registry contract is", hasRole);
   };
 
   const getCompliance = async () => {
@@ -525,7 +536,7 @@ function App() {
     const _countriesList = countriesList.split(',');
 
     const rpc = new RPC(provider);
-    uiConsole("Processing batch register identity transfer...");
+    uiConsole("Processing batch register identity...");
     const batchRegisterIdentityTransfer = await rpc.smartContractBatchRegisterIdentity(_addressesList, _identitiesList, _countriesList);
     uiConsole(batchRegisterIdentityTransfer);
   };
@@ -664,25 +675,36 @@ function App() {
     uiConsole(addAddressForRecovery);
   };
 
-  const smartContractRenounceRole = async (role: any, walletAddress: any) => {
+  const smartContractRemoveAddressIdentityRecover = async (lostWalletAddress: any, investorOnchainID: any) => {
+    if (!provider) {
+      uiConsole("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    uiConsole("Processing remove address for recovery...");
+    const removeAddressForRecovery = await rpc.smartContractRemoveAddressIdentityRecover(lostWalletAddress, investorOnchainID);
+    uiConsole(removeAddressForRecovery);
+  };
+
+  const smartContractRenounceRoleInToken = async (role: any, walletAddress: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
       return;
     }
     const rpc = new RPC(provider);
     uiConsole("Processing renounce role...");
-    const renounceRole = await rpc.smartContractRenounceRole(role, walletAddress);
+    const renounceRole = await rpc.smartContractRenounceRoleInToken(role, walletAddress);
     uiConsole(renounceRole);
   };
 
-  const smartContractRevokeRole = async (role: any, walletAddress: any) => {
+  const smartContractRevokeRoleInToken = async (role: any, walletAddress: any) => {
     if (!provider) {
       uiConsole("provider not initialized yet");
       return;
     }
     const rpc = new RPC(provider);
     uiConsole("Processing revoke role...");
-    const revokeRole = await rpc.smartContractRevokeRole(role, walletAddress);
+    const revokeRole = await rpc.smartContractRevokeRoleInToken(role, walletAddress);
     uiConsole(revokeRole);
   };
 
@@ -812,16 +834,6 @@ function App() {
     const rpc = new RPC(provider);
     const isClaimRevoked = await rpc.smartContractIsClaimRevoked(signature);
     uiConsole(isClaimRevoked);
-  };
-
-  const revokedClaims = async (signature: any) => {
-    if (!provider) {
-      uiConsole("provider not initialized yet");
-      return;
-    }
-    const rpc = new RPC(provider);
-    const revokedClaims = await rpc.smartContractRevokedClaims(signature);
-    uiConsole(revokedClaims);
   };
 
   const smartContractUpdateCountry = async (walletAddress: any, country: any) => {
@@ -1531,31 +1543,46 @@ function App() {
     //setNewWalletAddress("");
     //setInvestorOnchainID("");
   };
+  
+  const handleRemoveAddressIdentityRecoverClick = () => {
+    setShowRemoveAddressIdentityRecoverInput(!showRemoveAddressIdentityRecoverInput); // Toggle Token input visibility
+    setLostWalletAddress("");
+    setInvestorOnchainID("");
+  };
 
-  const handleRenounceRoleClick = () => {
-    setShowRenounceRoleInput(!showRenounceRoleInput); // Toggle Token input visibility
+  const handleRemoveAddressIdentityRecover = () => {
+    const lostWalletAddress = (document.getElementById('lostWalletAddress') as HTMLInputElement).value;
+    const investorOnchainID = (document.getElementById('investorOnchainID') as HTMLInputElement).value;
+    
+    smartContractRemoveAddressIdentityRecover(lostWalletAddress, investorOnchainID);
+    //setLostWalletAddress("");
+    //setInvestorOnchainID("");
+  };
+
+  const handleRenounceRoleInTokenClick = () => {
+    setshowRenounceRoleInTokenInput(!showRenounceRoleInTokenInput); // Toggle Token input visibility
     setRole("");
     setWalletAddress("");
   };
 
-  const handleRenounceRole = () => {
+  const handleRenounceRoleInToken = () => {
     const role = (document.getElementById('role') as HTMLInputElement).value;
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
-    smartContractRenounceRole(role, walletAddress);
+    smartContractRenounceRoleInToken(role, walletAddress);
     //setRole("");
     //setWalletAddress("");
   };
 
-  const handleRevokeRoleClick = () => {
-    setShowRevokeRoleInput(!showRevokeRoleInput); // Toggle Token input visibility
+  const handleRevokeRoleInTokenClick = () => {
+    setshowRevokeRoleInTokenInput(!showRevokeRoleInTokenInput); // Toggle Token input visibility
     setRole("");
     setWalletAddress("");
   };
 
-  const handleRevokeRole = () => {
+  const handleRevokeRoleInToken = () => {
     const role = (document.getElementById('role') as HTMLInputElement).value;
     const walletAddress = (document.getElementById('walletAddress') as HTMLInputElement).value;
-    smartContractRevokeRole(role, walletAddress);
+    smartContractRevokeRoleInToken(role, walletAddress);
     //setRole("");
     //setWalletAddress("");
   };
@@ -1733,17 +1760,6 @@ function App() {
     //setSignature("");
   };
   
-  const handleRevokedClaimsClick = () => {
-    setShowRevokedClaimsInput(!showRevokedClaimsInput); // Toggle Token input visibility
-    setSignature("");
-  };
-
-  const handleRevokedClaims= () => {
-    const signature = (document.getElementById('signature') as HTMLInputElement).value;
-    revokedClaims(signature);
-    //setSignature("");
-  };
-  
   const handleUpdateCountryClick = () => {
     setUpdateCountryInput(!showUpdateCountryInput); // Toggle Token input visibility
     setWalletAddress("");
@@ -1897,7 +1913,7 @@ function App() {
         </div>
         <div>
           <button onClick={getAccounts} className="card">
-            Get Accounts
+            Get Account Address
           </button>
         </div>
         <div>
@@ -1953,6 +1969,12 @@ function App() {
       <h3>Token Smart Contract Read Functions</h3>
 
       <div className="flex-container">
+
+      <div>
+          <button onClick={getMyTokenBalance} className="card">
+            My Token Balance
+          </button>
+        </div>
 
       <div>
           <button onClick={getTokenAddress} className="card">
@@ -2381,16 +2403,31 @@ function App() {
             </div>
           )}
         </div>
+        
+        <div>
+          <button onClick={handleRemoveAddressIdentityRecoverClick} className="card">
+            Remove Address for Identity Recover
+          </button>
+          {showRemoveAddressIdentityRecoverInput && (
+            <div>
+              <input type="text" value={lostWalletAddress} id="lostWalletAddress" onChange={handleInputChange} placeholder="Enter wallet address to remove" />
+              <input type="text" value={investorOnchainID} id="investorOnchainID" onChange={handleInputChange} placeholder="Enter investor OnchainID" />
+              <button onClick={handleRemoveAddressIdentityRecover} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+                Remove Address
+              </button>
+            </div>
+          )}
+        </div>
 
         <div>
-          <button onClick={handleRenounceRoleClick} className="card">
-            Renounce Role
+          <button onClick={handleRenounceRoleInTokenClick} className="card">
+            Renounce Role 
           </button>
-          {showRenounceRoleInput && (
+          {showRenounceRoleInTokenInput && (
             <div>
               <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
-              <button onClick={handleRenounceRole} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              <button onClick={handleRenounceRoleInToken} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
                 Renounce Role
               </button>
             </div>
@@ -2398,14 +2435,14 @@ function App() {
         </div>
 
         <div>
-          <button onClick={handleRevokeRoleClick} className="card">
+          <button onClick={handleRevokeRoleInTokenClick} className="card">
             Revoke Role
           </button>
-          {showRevokeRoleInput && (
+          {showRevokeRoleInTokenInput && (
             <div>
               <input type="text" value={role} id="role" onChange={handleInputChange} placeholder="Enter role" />
               <input type="text" value={walletAddress} id="walletAddress" onChange={handleInputChange} placeholder="Enter wallet address" />
-              <button onClick={handleRevokeRole} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              <button onClick={handleRevokeRoleInToken} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
                 Revoke Role
               </button>
             </div>
@@ -2762,20 +2799,6 @@ function App() {
           )}
         </div>
 
-        <div>
-          <button onClick={handleRevokedClaimsClick} className="card">
-            Revoked Claims
-          </button>
-          {showRevokedClaimsInput && (
-            <div>
-              <input type="text" value={signature} id="signature" onChange={handleInputChange} placeholder="Enter signature value" />
-              <button onClick={handleRevokedClaims} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Revoked Claims
-              </button>
-            </div>
-          )}
-        </div>
-
       </div>
 
       <h3>Identity & Claim Registration Write Functions</h3>
@@ -2812,21 +2835,6 @@ function App() {
         </div>
 
         <div>
-          <button onClick={handleRevokeIdentityClaimClick} className="card">
-            Revoke Identity Claim
-          </button>
-          {showRevokeIdentityClaimInput && (
-            <div>
-              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
-              <input type="text" value={claimId} id="claimId" onChange={handleInputChange} placeholder="Enter claim ID" />
-              <button onClick={handleRevokeIdentityClaim} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
-              Revoke Identity Claim
-              </button>
-            </div>
-          )}
-        </div>
-
-        <div>
           <button onClick={handleRemoveIdentityClaimClick} className="card">
             Remove Identity Claim
           </button>
@@ -2836,6 +2844,21 @@ function App() {
               <input type="text" value={claimId} id="claimId" onChange={handleInputChange} placeholder="Enter claim ID" />
               <button onClick={handleRemoveIdentityClaim} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
               Remove Identity Claim
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button onClick={handleRevokeIdentityClaimClick} className="card">
+            Revoke Identity Claim (Claim issuer execution)
+          </button>
+          {showRevokeIdentityClaimInput && (
+            <div>
+              <input type="text" value={identityAddress} id="identityAddress" onChange={handleInputChange} placeholder="Enter identity address" />
+              <input type="text" value={claimId} id="claimId" onChange={handleInputChange} placeholder="Enter claim ID" />
+              <button onClick={handleRevokeIdentityClaim} className="card" style={{ backgroundColor: '#0070f3', color: 'white' }}>
+              Revoke Identity Claim
               </button>
             </div>
           )}
